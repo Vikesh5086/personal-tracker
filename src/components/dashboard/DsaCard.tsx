@@ -17,15 +17,38 @@ export const DsaCard: React.FC = () => {
   if (!currentLog) return null;
   const dsa = currentLog.dsa;
 
+  const isCompleted = Boolean(dsa.questionsSolved > 0 || dsa.completed);
+
   const handleUpdate = (partial: Partial<typeof dsa>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      dsa: {
-        ...prev.dsa,
-        ...partial,
-        completed: (partial.questionsSolved !== undefined ? partial.questionsSolved > 0 : prev.dsa.questionsSolved > 0) || (partial.completed ?? prev.dsa.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextQuestions = partial.questionsSolved !== undefined ? partial.questionsSolved : prev.dsa.questionsSolved;
+      let nextCompleted: boolean;
+      if (nextQuestions <= 0 && partial.completed !== true) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = nextQuestions > 0 || prev.dsa.completed;
+      }
+
+      return {
+        ...prev,
+        dsa: {
+          ...prev.dsa,
+          ...partial,
+          questionsSolved: nextQuestions,
+          completed: nextCompleted,
+        },
+      };
+    });
+  };
+
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      handleUpdate({ questionsSolved: 0, completed: false });
+    } else {
+      handleUpdate({ questionsSolved: Math.max(1, dsa.questionsSolved), completed: true });
+    }
   };
 
   const toggleDifficulty = (diff: DsaDifficulty) => {
@@ -54,8 +77,6 @@ export const DsaCard: React.FC = () => {
     }
   };
 
-  const isCompleted = dsa.completed || dsa.questionsSolved > 0;
-
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
       isCompleted
@@ -82,13 +103,13 @@ export const DsaCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => handleUpdate({ completed: !isCompleted })}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-purple-600 dark:text-purple-400 bg-purple-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-purple-500 text-white' : ''}`} />
         </button>
@@ -107,13 +128,19 @@ export const DsaCard: React.FC = () => {
 
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => handleUpdate({ questionsSolved: Math.max(0, dsa.questionsSolved - 1) })}
+            onClick={() => {
+              const nextQ = Math.max(0, dsa.questionsSolved - 1);
+              handleUpdate({ questionsSolved: nextQ, completed: nextQ > 0 });
+            }}
             className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-sm"
           >
             <Minus className="w-4 h-4" />
           </button>
           <button
-            onClick={() => handleUpdate({ questionsSolved: dsa.questionsSolved + 1 })}
+            onClick={() => {
+              const nextQ = dsa.questionsSolved + 1;
+              handleUpdate({ questionsSolved: nextQ, completed: true });
+            }}
             className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center hover:bg-purple-700 transition-colors shadow-sm shadow-purple-600/30"
           >
             <Plus className="w-4 h-4" />

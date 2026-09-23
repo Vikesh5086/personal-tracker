@@ -26,6 +26,12 @@ export const LearnedCard: React.FC = () => {
     sourceUrl: '',
   };
 
+  const isCompleted = Boolean(
+    (learned.takeaway && learned.takeaway.trim().length > 0) ||
+    learned.learnedSomething ||
+    learned.completed
+  );
+
   const handleUpdate = (partial: Partial<typeof learned>) => {
     updateCurrentHabit((prev) => {
       const prevLearned = prev.learnedNewThing || {
@@ -37,13 +43,21 @@ export const LearnedCard: React.FC = () => {
       };
       const updatedLearned = { ...prevLearned, ...partial };
       const hasTakeaway = Boolean(updatedLearned.takeaway && updatedLearned.takeaway.trim().length > 0);
-      const isComplete = updatedLearned.learnedSomething || hasTakeaway || (partial.completed ?? prevLearned.completed);
+      const isSomething = Boolean(updatedLearned.learnedSomething);
+      let nextCompleted: boolean;
+      if (!isSomething && !hasTakeaway && partial.completed !== true) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = isSomething || hasTakeaway;
+      }
 
       return {
         ...prev,
         learnedNewThing: {
           ...updatedLearned,
-          completed: isComplete,
+          completed: nextCompleted,
         },
       };
     });
@@ -52,16 +66,28 @@ export const LearnedCard: React.FC = () => {
   const toggleLearnedStatus = (status: boolean) => {
     if (status) {
       sounds.playCheck();
+      handleUpdate({
+        learnedSomething: true,
+        completed: true,
+      });
     } else {
       sounds.playTap();
+      handleUpdate({
+        learnedSomething: false,
+        completed: false,
+        takeaway: '',
+      });
     }
-    handleUpdate({
-      learnedSomething: status,
-      completed: status,
-    });
   };
 
-  const isCompleted = learned.completed || learned.learnedSomething || Boolean(learned.takeaway && learned.takeaway.trim().length > 0);
+  const handleToggleComplete = () => {
+    sounds.playCheck();
+    if (isCompleted) {
+      handleUpdate({ learnedSomething: false, completed: false, takeaway: '' });
+    } else {
+      handleUpdate({ learnedSomething: true, completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -89,16 +115,13 @@ export const LearnedCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => {
-            sounds.playCheck();
-            handleUpdate({ completed: !isCompleted });
-          }}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-amber-500 bg-amber-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-amber-500 text-white' : ''}`} />
         </button>

@@ -17,18 +17,39 @@ export const WorkoutCard: React.FC = () => {
   if (!currentLog) return null;
   const workout = currentLog.workout;
 
+  const isCompleted = Boolean(workout.type && workout.type !== 'None' && workout.completed !== false);
+
   const handleUpdate = (partial: Partial<typeof workout>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      workout: {
-        ...prev.workout,
-        ...partial,
-        completed: (partial.type ? partial.type !== 'None' : prev.workout.type !== 'None') || (partial.completed ?? prev.workout.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextType = partial.type !== undefined ? partial.type : prev.workout.type;
+      const isDone = nextType !== 'None' && partial.completed !== false;
+      return {
+        ...prev,
+        workout: {
+          ...prev.workout,
+          ...partial,
+          completed: partial.completed !== undefined ? partial.completed : isDone,
+        },
+      };
+    });
   };
 
-  const isCompleted = workout.completed || (workout.type !== 'None' && workout.type !== undefined);
+  const handleSelectType = (selectedType: WorkoutType) => {
+    if (workout.type === selectedType) {
+      // Toggle off / deselect
+      handleUpdate({ type: 'None', completed: false });
+    } else {
+      handleUpdate({ type: selectedType, completed: true });
+    }
+  };
+
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      handleUpdate({ type: 'None', completed: false });
+    } else {
+      handleUpdate({ type: workout.type && workout.type !== 'None' ? workout.type : 'Strength only', completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -56,13 +77,13 @@ export const WorkoutCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => handleUpdate({ completed: !isCompleted })}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-orange-600 dark:text-orange-400 bg-orange-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-orange-500 text-white' : ''}`} />
         </button>
@@ -76,7 +97,7 @@ export const WorkoutCard: React.FC = () => {
             <button
               key={item.type}
               type="button"
-              onClick={() => handleUpdate({ type: item.type })}
+              onClick={() => handleSelectType(item.type)}
               className={`p-3 rounded-2xl border text-left transition-all ${
                 isSelected
                   ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/25'

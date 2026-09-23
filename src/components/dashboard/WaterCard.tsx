@@ -13,15 +13,29 @@ export const WaterCard: React.FC = () => {
   const current = water.intakeLitres || 0;
   const fillPercent = Math.min(100, Math.round((current / target) * 100));
 
+  const isCompleted = Boolean(water.intakeLitres > 0 && (water.completed || current >= target));
+
   const handleUpdate = (partial: Partial<typeof water>) => {
     updateCurrentHabit((prev) => {
       const nextIntake = partial.intakeLitres !== undefined ? partial.intakeLitres : prev.water.intakeLitres;
+      const targetVal = partial.targetLitres || prev.water.targetLitres || 2.5;
+
+      let nextCompleted: boolean;
+      if (nextIntake <= 0) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = nextIntake >= targetVal || prev.water.completed;
+      }
+
       return {
         ...prev,
         water: {
           ...prev.water,
           ...partial,
-          completed: nextIntake >= (partial.targetLitres || prev.water.targetLitres || 2.0) || (partial.completed ?? prev.water.completed),
+          intakeLitres: nextIntake,
+          completed: nextCompleted,
         },
       };
     });
@@ -30,10 +44,17 @@ export const WaterCard: React.FC = () => {
   const addWater = (delta: number) => {
     sounds.playWater();
     const nextVal = Math.max(0, Math.round((current + delta) * 10) / 10);
-    handleUpdate({ intakeLitres: nextVal });
+    handleUpdate({ intakeLitres: nextVal, completed: nextVal > 0 ? (nextVal >= target || water.completed) : false });
   };
 
-  const isCompleted = water.completed || current >= target;
+  const handleToggleComplete = () => {
+    sounds.playCheck();
+    if (isCompleted) {
+      handleUpdate({ intakeLitres: 0, completed: false });
+    } else {
+      handleUpdate({ intakeLitres: Math.max(target, 2.5), completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -61,16 +82,13 @@ export const WaterCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => {
-            sounds.playCheck();
-            handleUpdate({ completed: !isCompleted });
-          }}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to reset)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-cyan-500 text-white' : ''}`} />
         </button>

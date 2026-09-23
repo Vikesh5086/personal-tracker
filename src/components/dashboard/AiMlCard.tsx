@@ -14,18 +14,40 @@ export const AiMlCard: React.FC = () => {
   if (!currentLog) return null;
   const aiMl = currentLog.aiMl;
 
+  const isCompleted = Boolean((aiMl.topic && aiMl.topic.trim().length > 0) || aiMl.completed);
+
   const handleUpdate = (partial: Partial<typeof aiMl>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      aiMl: {
-        ...prev.aiMl,
-        ...partial,
-        completed: (partial.topic !== undefined ? partial.topic.trim().length > 0 : prev.aiMl.topic.trim().length > 0) || (partial.completed ?? prev.aiMl.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextTopic = partial.topic !== undefined ? partial.topic : prev.aiMl.topic;
+      const hasTopic = Boolean(nextTopic && nextTopic.trim().length > 0);
+      let nextCompleted: boolean;
+      if (!hasTopic && partial.completed !== true) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = hasTopic || prev.aiMl.completed;
+      }
+
+      return {
+        ...prev,
+        aiMl: {
+          ...prev.aiMl,
+          ...partial,
+          topic: nextTopic,
+          completed: nextCompleted,
+        },
+      };
+    });
   };
 
-  const isCompleted = aiMl.completed || (aiMl.topic && aiMl.topic.trim().length > 0);
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      handleUpdate({ topic: '', completed: false });
+    } else {
+      handleUpdate({ topic: aiMl.topic && aiMl.topic.trim().length > 0 ? aiMl.topic : 'Machine Learning', completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -53,13 +75,13 @@ export const AiMlCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => handleUpdate({ completed: !isCompleted })}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-blue-600 dark:text-blue-400 bg-blue-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-blue-500 text-white' : ''}`} />
         </button>

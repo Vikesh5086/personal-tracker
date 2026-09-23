@@ -25,11 +25,14 @@ export const SleepCard: React.FC = () => {
   if (!currentLog) return null;
   const sleep = currentLog.sleep;
 
+  const isCompleted = Boolean(sleep.completed);
+
   const handleUpdate = (partial: Partial<typeof sleep>) => {
     updateCurrentHabit((prev) => {
       const nextBed = partial.bedTime ?? prev.sleep.bedTime;
       const nextWake = partial.wakeTime ?? prev.sleep.wakeTime;
       const duration = calculateSleepDuration(nextBed, nextWake);
+      const nextCompleted = partial.completed !== undefined ? partial.completed : prev.sleep.completed;
 
       return {
         ...prev,
@@ -37,13 +40,11 @@ export const SleepCard: React.FC = () => {
           ...prev.sleep,
           ...partial,
           durationHours: duration,
-          completed: duration >= 6.0 || (partial.completed ?? prev.sleep.completed),
+          completed: nextCompleted,
         },
       };
     });
   };
-
-  const isCompleted = sleep.completed || sleep.durationHours >= 6.0;
 
   // Sleep evaluation
   const getQualityText = (hours: number) => {
@@ -88,7 +89,7 @@ export const SleepCard: React.FC = () => {
               ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-indigo-500 text-white' : ''}`} />
         </button>

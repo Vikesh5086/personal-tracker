@@ -18,18 +18,41 @@ export const JournalMoodCard: React.FC = () => {
   if (!currentLog) return null;
   const journal = currentLog.journal;
 
+  const isCompleted = Boolean((journal.note && journal.note.trim().length > 0) || journal.completed);
+
   const handleUpdate = (partial: Partial<typeof journal>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      journal: {
-        ...prev.journal,
-        ...partial,
-        completed: (partial.note !== undefined ? partial.note.trim().length > 0 : prev.journal.note !== undefined && prev.journal.note.trim().length > 0) || (partial.completed ?? prev.journal.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextNote = partial.note !== undefined ? partial.note : prev.journal.note;
+      const hasNote = Boolean(nextNote && nextNote.trim().length > 0);
+      let nextCompleted: boolean;
+      if (!hasNote && partial.completed !== true) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = hasNote || prev.journal.completed;
+      }
+
+      return {
+        ...prev,
+        journal: {
+          ...prev.journal,
+          ...partial,
+          note: nextNote,
+          completed: nextCompleted,
+        },
+      };
+    });
   };
 
-  const isCompleted = journal.completed || (journal.note && journal.note.trim().length > 0);
+  const handleToggleComplete = () => {
+    sounds.playCheck();
+    if (isCompleted) {
+      handleUpdate({ note: '', completed: false });
+    } else {
+      handleUpdate({ completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -57,16 +80,13 @@ export const JournalMoodCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => {
-            sounds.playCheck();
-            handleUpdate({ completed: !isCompleted });
-          }}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-yellow-500 text-white' : ''}`} />
         </button>

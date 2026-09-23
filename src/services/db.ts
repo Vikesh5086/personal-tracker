@@ -115,27 +115,37 @@ export function evaluateLogCompletion(log: DailyLog): {
   let count = 0;
   const totalCoreSections = 10;
 
-  // 1. DSA
-  if (log.dsa.completed || log.dsa.questionsSolved > 0) count++;
-  // 2. Workout
-  if (log.workout.completed || (log.workout.type !== 'None' && log.workout.type !== undefined)) count++;
-  // 3. Eating
-  if (log.eating.completed || (log.eating.type !== 'None' && log.eating.type !== undefined)) count++;
-  // 4. AI/ML
-  if (log.aiMl.completed || (log.aiMl.topic && log.aiMl.topic.trim().length > 0)) count++;
-  // 5. Water (completed if logged > 0)
-  if (log.water.completed || log.water.intakeLitres > 0) count++;
-  // 6. Sleep
-  if (log.sleep.completed || log.sleep.durationHours > 0) count++;
-  // 7. Photo
-  if (log.photo.completed || (log.photo.photoBase64 && log.photo.photoBase64.length > 0)) count++;
-  // 8. Journal
-  if (log.journal.completed || (log.journal.note && log.journal.note.trim().length > 0)) count++;
-  // 9. Priorities (at least 1 item checked or typed)
+  // 1. DSA (Questions solved > 0 or explicitly completed)
+  if (log.dsa.questionsSolved > 0 || log.dsa.completed) count++;
+
+  // 2. Workout (Valid workout type selected and not marked incomplete)
+  if (log.workout.type && log.workout.type !== 'None' && log.workout.completed !== false) count++;
+
+  // 3. Eating (Valid meal type selected and not marked incomplete)
+  if (log.eating.type && log.eating.type !== 'None' && log.eating.completed !== false) count++;
+
+  // 4. AI/ML (Topic entered or explicitly completed)
+  if ((log.aiMl.topic && log.aiMl.topic.trim().length > 0) || log.aiMl.completed) count++;
+
+  // 5. Water (Water intake > 0 and logged)
+  if (log.water.intakeLitres > 0 && (log.water.completed || log.water.intakeLitres >= 0.25)) count++;
+
+  // 6. Sleep (Only counted if user confirms/completes sleep)
+  if (log.sleep.completed) count++;
+
+  // 7. Photo (Photo uploaded or marked complete)
+  if ((log.photo.photoBase64 && log.photo.photoBase64.length > 0) || log.photo.completed) count++;
+
+  // 8. Journal (Reflection note entered or marked complete)
+  if ((log.journal.note && log.journal.note.trim().length > 0) || log.journal.completed) count++;
+
+  // 9. Priorities (At least one priority item with text is checked done)
   const hasPriorities = log.priorities.items.some(p => p.text.trim().length > 0 && p.done);
-  if (log.priorities.completed || hasPriorities) count++;
-  // 10. Learned Something New Today
-  if (log.learnedNewThing?.completed || (log.learnedNewThing?.takeaway && log.learnedNewThing.takeaway.trim().length > 0) || log.learnedNewThing?.learnedSomething) count++;
+  if (hasPriorities || (log.priorities.completed && log.priorities.items.some(p => p.done))) count++;
+
+  // 10. Learned Something New Today (Insight confirmed or takeaway noted)
+  const hasLearned = Boolean((log.learnedNewThing?.takeaway && log.learnedNewThing.takeaway.trim().length > 0) || log.learnedNewThing?.learnedSomething);
+  if (hasLearned || log.learnedNewThing?.completed) count++;
 
   const percentage = Math.round((count / totalCoreSections) * 100);
   const isPerfectDay = count === totalCoreSections;

@@ -16,18 +16,39 @@ export const EatingCard: React.FC = () => {
   if (!currentLog) return null;
   const eating = currentLog.eating;
 
+  const isCompleted = Boolean(eating.type && eating.type !== 'None' && eating.completed !== false);
+
   const handleUpdate = (partial: Partial<typeof eating>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      eating: {
-        ...prev.eating,
-        ...partial,
-        completed: (partial.type ? partial.type !== 'None' : prev.eating.type !== 'None') || (partial.completed ?? prev.eating.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextType = partial.type !== undefined ? partial.type : prev.eating.type;
+      const isDone = nextType !== 'None' && partial.completed !== false;
+      return {
+        ...prev,
+        eating: {
+          ...prev.eating,
+          ...partial,
+          completed: partial.completed !== undefined ? partial.completed : isDone,
+        },
+      };
+    });
   };
 
-  const isCompleted = eating.completed || (eating.type !== 'None' && eating.type !== undefined);
+  const handleSelectType = (selectedType: EatingType) => {
+    if (eating.type === selectedType) {
+      // Toggle off / deselect
+      handleUpdate({ type: 'None', completed: false });
+    } else {
+      handleUpdate({ type: selectedType, completed: true });
+    }
+  };
+
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      handleUpdate({ type: 'None', completed: false });
+    } else {
+      handleUpdate({ type: eating.type && eating.type !== 'None' ? eating.type : 'Healthy', completed: true });
+    }
+  };
 
   return (
     <div className={`rounded-3xl p-5 border transition-all duration-200 glass-card relative overflow-hidden ${
@@ -55,13 +76,13 @@ export const EatingCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => handleUpdate({ completed: !isCompleted })}
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
         >
           <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-emerald-500 text-white' : ''}`} />
         </button>
@@ -75,7 +96,7 @@ export const EatingCard: React.FC = () => {
             <button
               key={item.type}
               type="button"
-              onClick={() => handleUpdate({ type: item.type })}
+              onClick={() => handleSelectType(item.type)}
               className={`p-3 rounded-2xl border text-center transition-all ${
                 isSelected
                   ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02]'

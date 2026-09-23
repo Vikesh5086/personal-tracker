@@ -11,15 +11,40 @@ export const PhotoCard: React.FC = () => {
   if (!currentLog) return null;
   const photo = currentLog.photo;
 
+  const hasPhoto = Boolean(photo.photoBase64 && photo.photoBase64.length > 0);
+  const isCompleted = hasPhoto || photo.completed;
+
   const handleUpdate = (partial: Partial<typeof photo>) => {
-    updateCurrentHabit((prev) => ({
-      ...prev,
-      photo: {
-        ...prev.photo,
-        ...partial,
-        completed: (partial.photoBase64 !== undefined ? partial.photoBase64.length > 0 : prev.photo.photoBase64 !== undefined && prev.photo.photoBase64.length > 0) || (partial.completed ?? prev.photo.completed),
-      },
-    }));
+    updateCurrentHabit((prev) => {
+      const nextPhoto = partial.photoBase64 !== undefined ? partial.photoBase64 : prev.photo.photoBase64;
+      const hasImg = Boolean(nextPhoto && nextPhoto.length > 0);
+      let nextCompleted: boolean;
+      if (!hasImg && partial.completed !== true) {
+        nextCompleted = false;
+      } else if (partial.completed !== undefined) {
+        nextCompleted = partial.completed;
+      } else {
+        nextCompleted = hasImg || prev.photo.completed;
+      }
+
+      return {
+        ...prev,
+        photo: {
+          ...prev.photo,
+          ...partial,
+          photoBase64: nextPhoto,
+          completed: nextCompleted,
+        },
+      };
+    });
+  };
+
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      handleUpdate({ photoBase64: '', completed: false });
+    } else {
+      handleUpdate({ completed: true });
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,20 +56,17 @@ export const PhotoCard: React.FC = () => {
       }
       try {
         const compressed = await compressImage(file, 800, 0.75);
-        handleUpdate({ photoBase64: compressed });
+        handleUpdate({ photoBase64: compressed, completed: true });
       } catch (err) {
         console.error('Image compression fallback:', err);
         const reader = new FileReader();
         reader.onloadend = () => {
-          handleUpdate({ photoBase64: reader.result as string });
+          handleUpdate({ photoBase64: reader.result as string, completed: true });
         };
         reader.readAsDataURL(file);
       }
     }
   };
-
-  const hasPhoto = Boolean(photo.photoBase64 && photo.photoBase64.length > 0);
-  const isCompleted = photo.completed || hasPhoto;
 
   return (
     <>
@@ -73,13 +95,13 @@ export const PhotoCard: React.FC = () => {
           </div>
 
           <button
-            onClick={() => handleUpdate({ completed: !isCompleted })}
+            onClick={handleToggleComplete}
             className={`p-1.5 rounded-xl transition-colors ${
               isCompleted
                 ? 'text-pink-600 dark:text-pink-400 bg-pink-500/10'
                 : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
             }`}
-            title={isCompleted ? 'Marked complete' : 'Mark complete'}
+            title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
           >
             <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-pink-500 text-white' : ''}`} />
           </button>
@@ -106,7 +128,7 @@ export const PhotoCard: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleUpdate({ photoBase64: '' })}
+                  onClick={() => handleUpdate({ photoBase64: '', completed: false })}
                   className="p-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-lg"
                   title="Remove photo"
                 >
