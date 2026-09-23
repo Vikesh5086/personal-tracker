@@ -1,6 +1,7 @@
 import React from 'react';
-import { Moon, CheckCircle, Sunrise, Sunset, Clock } from 'lucide-react';
+import { Moon, CheckCircle2, Circle, Sunrise, Sunset, Clock } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { sounds } from '../../services/sound';
 
 function calculateSleepDuration(bedTime: string, wakeTime: string): number {
   if (!bedTime || !wakeTime) return 0;
@@ -46,6 +47,16 @@ export const SleepCard: React.FC = () => {
     });
   };
 
+  const handleToggleComplete = () => {
+    if (isCompleted) {
+      sounds.playTap();
+      handleUpdate({ completed: false });
+    } else {
+      sounds.playCheck();
+      handleUpdate({ completed: true });
+    }
+  };
+
   // Sleep evaluation
   const getQualityText = (hours: number) => {
     if (hours >= 7.5 && hours <= 9.0) return { text: 'Optimal Rest', color: 'text-emerald-500' };
@@ -83,15 +94,20 @@ export const SleepCard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => handleUpdate({ completed: !isCompleted })}
+          type="button"
+          onClick={handleToggleComplete}
           className={`p-1.5 rounded-xl transition-colors ${
             isCompleted
               ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10'
               : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
-          title={isCompleted ? 'Marked complete (click to undo)' : 'Mark complete'}
+          title={isCompleted ? 'Marked complete (click to undo / uncheck)' : 'Click to mark complete'}
         >
-          <CheckCircle className={`w-5 h-5 ${isCompleted ? 'fill-indigo-500 text-white' : ''}`} />
+          {isCompleted ? (
+            <CheckCircle2 className="w-5 h-5 fill-indigo-500 text-white" />
+          ) : (
+            <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600" />
+          )}
         </button>
       </div>
 
@@ -125,23 +141,37 @@ export const SleepCard: React.FC = () => {
       </div>
 
       {/* Duration Bar & Auto-Calculation */}
-      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+      <div className={`p-3.5 rounded-2xl border transition-all ${
+        isCompleted
+          ? 'bg-slate-50 dark:bg-slate-800/60 border-indigo-500/20'
+          : 'bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/60 dark:border-slate-800'
+      }`}>
         <div className="flex items-baseline justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-indigo-500" />
-            <span className="text-xl font-black text-slate-900 dark:text-white font-mono">
+            <Clock className={`w-4 h-4 ${isCompleted ? 'text-indigo-500' : 'text-slate-400'}`} />
+            <span className={`text-xl font-black font-mono ${isCompleted ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
               {sleep.durationHours} <span className="text-xs font-normal text-slate-400">hours</span>
             </span>
           </div>
-          <span className={`text-xs font-bold ${quality.color}`}>
-            {quality.text}
-          </span>
+          {isCompleted ? (
+            <span className={`text-xs font-bold ${quality.color}`}>
+              {quality.text}
+            </span>
+          ) : (
+            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+              Not Logged Yet
+            </span>
+          )}
         </div>
 
         {/* Visual Duration Bar */}
         <div className="h-3 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 transition-all duration-500"
+            className={`h-full rounded-full transition-all duration-500 ${
+              isCompleted
+                ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400'
+                : 'bg-slate-300 dark:bg-slate-600 opacity-30'
+            }`}
             style={{ width: `${barPercent}%` }}
           />
         </div>
@@ -151,6 +181,29 @@ export const SleepCard: React.FC = () => {
           <span>10h+</span>
         </div>
       </div>
+
+      {/* Prominent Toggle Button */}
+      <button
+        type="button"
+        onClick={handleToggleComplete}
+        className={`w-full mt-3.5 py-2.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+          isCompleted
+            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-purple-500'
+            : 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20'
+        }`}
+      >
+        {isCompleted ? (
+          <>
+            <CheckCircle2 className="w-4 h-4 fill-white text-indigo-600" />
+            <span>✓ Sleep Logged ({sleep.durationHours}h) • Tap to Undo / Uncheck</span>
+          </>
+        ) : (
+          <>
+            <Moon className="w-4 h-4" />
+            <span>Confirm Sleep ({sleep.durationHours}h)</span>
+          </>
+        )}
+      </button>
     </div>
   );
 };
