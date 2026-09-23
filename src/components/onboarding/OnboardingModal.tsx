@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Camera, Calendar, Target, User, Sparkles, LogOut } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { GoalType, UserProfile } from '../../types';
+import { compressImage } from '../../services/imageUtils';
 
 export const OnboardingModal: React.FC = () => {
   const {
@@ -9,6 +10,7 @@ export const OnboardingModal: React.FC = () => {
     saveUserProfile,
     todayDate,
     loginWithGoogleAction,
+    restoreCloudDataAction,
     logoutAction,
     firebaseUser,
     isCloudSyncing,
@@ -39,18 +41,24 @@ export const OnboardingModal: React.FC = () => {
     setEndDate(calculateDefaultEndDate(newStart));
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Photo must be less than 5MB');
+      if (file.size > 8 * 1024 * 1024) {
+        alert('Photo must be less than 8MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePhoto(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file, 400, 0.8);
+        setProfilePhoto(compressed);
+      } catch (err) {
+        console.error('Image compression fallback:', err);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProfilePhoto(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -127,7 +135,7 @@ export const OnboardingModal: React.FC = () => {
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                 <button
                   type="button"
-                  onClick={loginWithGoogleAction}
+                  onClick={restoreCloudDataAction}
                   disabled={isCloudSyncing}
                   className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all flex items-center gap-1.5"
                 >

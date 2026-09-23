@@ -18,6 +18,7 @@ import {
 } from 'firebase/firestore';
 import { db as localDb, saveDailyLog, saveProfile, getAllDailyLogs, getProfile } from './db';
 import { DailyLog, UserProfile } from '../types';
+import { compressBase64Image } from './imageUtils';
 
 export interface FirebaseConfigParams {
   apiKey: string;
@@ -125,7 +126,47 @@ export async function logoutUser(): Promise<void> {
   }
 }
 
+// Helper to clean objects for Firestore (removes undefined fields which Firestore rejects)
+export function sanitizeForFirestore(obj: any): any {
+  if (obj === null || obj === undefined) return null;
+  if (Array.isArray(obj)) {
+    return obj.map(item => sanitizeForFirestore(item));
+  }
+  if (typeof obj === 'object') {
+    const clean: Record<string, any> = {};
+    for (const [key, val] of Object.entries(obj)) {
+      if (val !== undefined) {
+        clean[key] = sanitizeForFirestore(val);
+      }
+    }
+    return clean;
+  }
+  return obj;
+}
+
 // 4. Two-Way Cloud Synchronization Engine
+export async function syncProfileToCloud(userId: string, profile: UserProfile): Promise<void> {
+  const fb = initFirebase();
+  if (!fb || !firestoreInstance) return;
+
+  try {
+    let photo = profile.profilePhoto;
+    if (photo && photo.length > 200000) {
+      photo = await compressBase64Image(photo, 400, 0.8);
+    }
+
+    const cleanProfile = sanitizeForFirestore({
+      ...profile,
+      profilePhoto: photo || undefined,
+      lastCloudSync: new Date().toISOString(),
+    });
+    await setDoc(doc(firestoreInstance, 'users', userId), cleanProfile, { merge: true });
+  } catch (err) {
+    console.error('Failed to sync profile to cloud:', err);
+    throw err;
+  }
+}
+
 export async function syncLocalToCloud(userId: string): Promise<number> {
   const fb = initFirebase();
   if (!fb || !firestoreInstance) return 0;
@@ -134,20 +175,13 @@ export async function syncLocalToCloud(userId: string): Promise<number> {
     // 1. Sync Profile
     const profile = await getProfile();
     if (profile) {
-      await setDoc(doc(firestoreInstance, 'users', userId), {
-        ...profile,
-        lastCloudSync: new Date().toISOString(),
-      }, { merge: true });
+      await syncProfileToCloud(userId, profile);
     }
 
     // 2. Sync all local Daily Logs
     const localLogs = await getAllDailyLogs();
     for (const log of localLogs) {
-      await setDoc(
-        doc(firestoreInstance, 'users', userId, 'dailyLogs', log.date),
-        log,
-        { merge: true }
-      );
+      await syncSingleLogToCloud(userId, log);
     }
 
     return localLogs.length;
@@ -194,7 +228,19 @@ export async function syncSingleLogToCloud(userId: string, log: DailyLog): Promi
   const fb = initFirebase();
   if (!fb || !firestoreInstance) return;
   try {
-    await setDoc(doc(firestoreInstance, 'users', userId, 'dailyLogs', log.date), log, { merge: true });
+    let cleanLog = { ...log };
+    if (cleanLog.photo?.photoBase64 && cleanLog.photo.photoBase64.length > 300000) {
+      const compressedPhoto = await compressBase64Image(cleanLog.photo.photoBase64, 800, 0.75);
+      cleanLog = {
+        ...cleanLog,
+        photo: {
+          ...cleanLog.photo,
+          photoBase64: compressedPhoto,
+        },
+      };
+    }
+    const clean = sanitizeForFirestore(cleanLog);
+    await setDoc(doc(firestoreInstance, 'users', userId, 'dailyLogs', log.date), clean, { merge: true });
   } catch (err) {
     console.error('Failed to sync single log to cloud:', err);
   }
@@ -212,21 +258,46 @@ export function observeAuthState(callback: (user: User | null) => void): () => v
   });
 }
 
-// Real-time Cloud Snapshot listener
-export function listenToCloudChanges(userId: string, onUpdate: () => void): () => void {
+// Real-time Cloud Snapshot listener for BOTH Profile and DailyLogs
+export function listenToCloudChanges(
+  userId: string,
+  onProfileUpdate: (profile: UserProfile) => void,
+  onLogsUpdate: () => void
+): () => void {
   const fb = initFirebase();
   if (!fb || !firestoreInstance) return () => {};
 
+  // 1. Listen to Profile changes
+  const userDocRef = doc(firestoreInstance, 'users', userId);
+  const unsubProfile = onSnapshot(userDocRef, async (snap) => {
+    if (snap.exists()) {
+      const cloudProfile = snap.data() as UserProfile;
+      await localDb.profile.put({ ...cloudProfile, id: 'current_user' });
+      onProfileUpdate(cloudProfile);
+    }
+  }, (err) => {
+    console.error('Profile snapshot error:', err);
+  });
+
+  // 2. Listen to DailyLogs changes
   const logsCol = collection(firestoreInstance, 'users', userId, 'dailyLogs');
-  return onSnapshot(logsCol, async (snapshot) => {
+  const unsubLogs = onSnapshot(logsCol, async (snapshot) => {
     for (const change of snapshot.docChanges()) {
       if (change.type === 'added' || change.type === 'modified') {
         const log = change.doc.data() as DailyLog;
         await localDb.dailyLogs.put(log);
       }
     }
-    onUpdate();
+    onLogsUpdate();
+  }, (err) => {
+    console.error('Logs snapshot error:', err);
   });
+
+  return () => {
+    unsubProfile();
+    unsubLogs();
+  };
 }
+
 
 

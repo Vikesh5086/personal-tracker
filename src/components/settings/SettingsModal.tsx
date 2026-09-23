@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   User,
   Calendar,
@@ -24,6 +24,7 @@ import { useApp, ACCENT_COLOR_MAP } from '../../context/AppContext';
 import { AccentColor, GoalType, UserProfile } from '../../types';
 import { exportAllDataJSON, exportDailyLogsCSV, importDataJSON } from '../../services/exportImport';
 import { clearAllDatabaseData } from '../../services/db';
+import { compressImage } from '../../services/imageUtils';
 import {
   getFirebaseConfig,
   saveFirebaseConfig,
@@ -64,6 +65,21 @@ export const SettingsModal: React.FC = () => {
   const [endDate, setEndDate] = useState(profile?.endDate || todayDate);
   const [profilePhoto, setProfilePhoto] = useState(profile?.profilePhoto || '');
 
+  // Keep settings fields in sync if profile updates from cloud
+  useEffect(() => {
+    if (profile) {
+      setName(profile.name || '');
+      setAge(profile.age || 24);
+      setHeight(profile.height || '175 cm');
+      setWeight(profile.weight || '70 kg');
+      setGoal(profile.goal || 'General consistency');
+      setCustomGoalText(profile.customGoalText || '');
+      setStartDate(profile.startDate || todayDate);
+      setEndDate(profile.endDate || todayDate);
+      setProfilePhoto(profile.profilePhoto || '');
+    }
+  }, [profile, todayDate]);
+
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
@@ -82,18 +98,24 @@ export const SettingsModal: React.FC = () => {
   });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Photo must be less than 5MB');
+      if (file.size > 8 * 1024 * 1024) {
+        alert('Photo must be less than 8MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePhoto(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file, 400, 0.8);
+        setProfilePhoto(compressed);
+      } catch (err) {
+        console.error('Image compression fallback:', err);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProfilePhoto(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 

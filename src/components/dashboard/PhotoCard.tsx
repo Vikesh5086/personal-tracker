@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Camera, CheckCircle, Maximize2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Modal } from '../common/Modal';
+import { compressImage } from '../../services/imageUtils';
 
 export const PhotoCard: React.FC = () => {
   const { currentLog, updateCurrentHabit } = useApp();
@@ -21,18 +22,24 @@ export const PhotoCard: React.FC = () => {
     }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 8 * 1024 * 1024) {
-        alert('Photo must be less than 8MB');
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Photo must be less than 10MB');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        handleUpdate({ photoBase64: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file, 800, 0.75);
+        handleUpdate({ photoBase64: compressed });
+      } catch (err) {
+        console.error('Image compression fallback:', err);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          handleUpdate({ photoBase64: reader.result as string });
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 

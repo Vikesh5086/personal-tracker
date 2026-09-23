@@ -21,6 +21,7 @@ import {
   logoutUser,
   syncLocalToCloud,
   syncCloudToLocal,
+  syncProfileToCloud,
   syncSingleLogToCloud,
   listenToCloudChanges,
   observeAuthState,
@@ -63,6 +64,7 @@ interface AppContextType {
   isCloudSyncing: boolean;
   lastCloudSync: string | null;
   loginWithGoogleAction: () => Promise<void>;
+  restoreCloudDataAction: () => Promise<void>;
   logoutAction: () => Promise<void>;
   syncCloudData: () => Promise<{ uploaded: number; downloaded: number }>;
 }
@@ -247,14 +249,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Real-time Firestore snapshot listener for multi-device live sync
   useEffect(() => {
     if (!firebaseUser) return;
-    const unsub = listenToCloudChanges(firebaseUser.uid, async () => {
-      const logs = await getAllDailyLogs();
-      setAllLogs(logs);
-      if (currentDate) {
-        const updated = await getDailyLog(currentDate);
-        if (updated) setCurrentLog(updated);
+    const unsub = listenToCloudChanges(
+      firebaseUser.uid,
+      (cloudProfile) => {
+        setProfile(cloudProfile);
+        if (cloudProfile.themeMode) setThemeMode(cloudProfile.themeMode);
+        if (cloudProfile.accentColor) setAccentColor(cloudProfile.accentColor);
+        setShowOnboarding(false);
+      },
+      async () => {
+        const logs = await getAllDailyLogs();
+        setAllLogs(logs);
+        if (currentDate) {
+          const updated = await getDailyLog(currentDate);
+          if (updated) setCurrentLog(updated);
+        }
       }
-    });
+    );
     return () => unsub();
   }, [firebaseUser, currentDate]);
 
@@ -314,6 +325,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAccentColor(p.accentColor);
     setShowOnboarding(false);
     if (firebaseUser) {
+      await syncProfileToCloud(firebaseUser.uid, p).catch(console.error);
       syncLocalToCloud(firebaseUser.uid).catch(console.error);
     }
     await refreshAllLogs();
@@ -376,6 +388,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [loadData]);
 
+  const restoreCloudDataAction = useCallback(async () => {
+    if (!firebaseUser) return;
+    try {
+      setIsCloudSyncing(true);
+      const dl = await syncCloudToLocal(firebaseUser.uid);
+      if (dl.profileFound || dl.logsCount > 0) {
+        await loadData();
+        setShowOnboarding(false);
+      } else {
+        const localProf = await getProfile();
+        if (localProf && localProf.onboardingCompleted) {
+          await syncProfileToCloud(firebaseUser.uid, localProf);
+          await loadData();
+          setShowOnboarding(false);
+        } else {
+          alert('No existing cloud backup found for this account. Please complete your profile setup below to begin!');
+        }
+      }
+      const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setLastCloudSync(nowStr);
+      localStorage.setItem('last_cloud_sync_time', nowStr);
+    } catch (e: any) {
+      console.error('Restore error:', e);
+      alert('Could not restore from cloud: ' + (e.message || 'Unknown error'));
+    } finally {
+      setIsCloudSyncing(false);
+    }
+  }, [firebaseUser, loadData]);
+
   const logoutAction = useCallback(async () => {
     try {
       await logoutUser();
@@ -416,10 +457,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const updated: UserProfile = { ...profile, themeMode: next };
         saveProfile(updated);
         setProfile(updated);
+        if (firebaseUser) {
+          syncProfileToCloud(firebaseUser.uid, updated).catch(console.error);
+        }
       }
       return next;
     });
-  }, [profile]);
+  }, [profile, firebaseUser]);
 
   return (
     <AppContext.Provider
@@ -444,6 +488,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const updated = { ...profile, accentColor: color };
             saveProfile(updated);
             setProfile(updated);
+            if (firebaseUser) {
+              syncProfileToCloud(firebaseUser.uid, updated).catch(console.error);
+            }
           }
         },
         saveUserProfile,
@@ -462,6 +509,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isCloudSyncing,
         lastCloudSync,
         loginWithGoogleAction,
+        restoreCloudDataAction,
         logoutAction,
         syncCloudData,
       }}
