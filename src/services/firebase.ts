@@ -106,8 +106,17 @@ export async function loginWithGoogle(): Promise<User | null> {
   }
 
   const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(authInstance, provider);
-  return result.user;
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try {
+    const result = await signInWithPopup(authInstance, provider);
+    return result.user;
+  } catch (err: any) {
+    if (err.code === 'auth/popup-closed-by-user') {
+      console.warn('Google sign-in popup was closed by user');
+      return null;
+    }
+    throw err;
+  }
 }
 
 export async function logoutUser(): Promise<void> {

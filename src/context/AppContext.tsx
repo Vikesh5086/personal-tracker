@@ -333,6 +333,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const localProf = await getProfile();
           if (localProf && localProf.onboardingCompleted) {
             await syncLocalToCloud(u.uid);
+            await loadData();
+            setShowOnboarding(false);
+          } else {
+            // First-time user with Google: create initial profile using their Google details!
+            const d = new Date();
+            const startStr = d.toISOString().split('T')[0];
+            const endD = new Date(d.getTime() + 99 * 24 * 60 * 60 * 1000);
+            const endStr = endD.toISOString().split('T')[0];
+
+            const initialProfile: UserProfile = {
+              name: u.displayName || 'Champion',
+              age: 24,
+              height: '175 cm',
+              weight: '70 kg',
+              goal: 'General consistency',
+              profilePhoto: u.photoURL || undefined,
+              startDate: startStr,
+              endDate: endStr,
+              themeMode: 'dark',
+              accentColor: 'indigo',
+              onboardingCompleted: true,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+
+            await saveProfile(initialProfile);
+            await syncLocalToCloud(u.uid);
+            await loadData();
+            setShowOnboarding(false);
           }
         }
         const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
