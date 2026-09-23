@@ -28,22 +28,9 @@ export interface FirebaseConfigParams {
   appId: string;
 }
 
-// 1. Resolve Firebase Configuration (Vite env vars or localStorage config)
+// 1. Resolve Firebase Configuration (LocalStorage override -> Vite env vars -> Default project config)
 export function getFirebaseConfig(): FirebaseConfigParams | null {
-  const envConfig: FirebaseConfigParams = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
-  };
-
-  if (envConfig.apiKey && envConfig.projectId) {
-    return envConfig;
-  }
-
-  // Fallback to locally stored credentials entered via Settings UI
+  // Check custom user override in localStorage first
   const localSaved = localStorage.getItem('user_firebase_config');
   if (localSaved) {
     try {
@@ -54,6 +41,19 @@ export function getFirebaseConfig(): FirebaseConfigParams | null {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  const config: FirebaseConfigParams = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBNsxHgtdLhQ_8PAEnYL_RndElsNoHmbD8',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'personal-tracker-44653.firebaseapp.com',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'personal-tracker-44653',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'personal-tracker-44653.firebasestorage.app',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '752576248392',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:752576248392:web:8e5afb188e7c8f769c767d',
+  };
+
+  if (config.apiKey && config.projectId) {
+    return config;
   }
 
   return null;
