@@ -221,10 +221,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         try {
           setIsCloudSyncing(true);
           const dl = await syncCloudToLocal(user.uid);
-          if (dl > 0) {
+          if (dl.profileFound || dl.logsCount > 0) {
             await loadData();
+            setShowOnboarding(false);
           } else {
-            await syncLocalToCloud(user.uid);
+            const localProf = await getProfile();
+            if (localProf && localProf.onboardingCompleted) {
+              await syncLocalToCloud(user.uid);
+            }
           }
           const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           setLastCloudSync(nowStr);
@@ -317,14 +321,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Firebase actions
   const loginWithGoogleAction = useCallback(async () => {
     try {
+      setIsCloudSyncing(true);
       const u = await loginWithGoogle();
       if (u) {
         setFirebaseUser(u);
+        const dl = await syncCloudToLocal(u.uid);
+        if (dl.profileFound || dl.logsCount > 0) {
+          await loadData();
+          setShowOnboarding(false);
+        } else {
+          const localProf = await getProfile();
+          if (localProf && localProf.onboardingCompleted) {
+            await syncLocalToCloud(u.uid);
+          }
+        }
+        const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setLastCloudSync(nowStr);
+        localStorage.setItem('last_cloud_sync_time', nowStr);
       }
     } catch (e: any) {
       alert(e.message || 'Google Sign-In failed');
+    } finally {
+      setIsCloudSyncing(false);
     }
-  }, []);
+  }, [loadData]);
 
   const logoutAction = useCallback(async () => {
     await logoutUser();
@@ -335,13 +355,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!firebaseUser) return { uploaded: 0, downloaded: 0 };
     setIsCloudSyncing(true);
     try {
-      const downloaded = await syncCloudToLocal(firebaseUser.uid);
+      const downloadedRes = await syncCloudToLocal(firebaseUser.uid);
       const uploaded = await syncLocalToCloud(firebaseUser.uid);
       await refreshAllLogs();
       const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       setLastCloudSync(nowStr);
       localStorage.setItem('last_cloud_sync_time', nowStr);
-      return { uploaded, downloaded };
+      return { uploaded, downloaded: downloadedRes.logsCount };
     } finally {
       setIsCloudSyncing(false);
     }

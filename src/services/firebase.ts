@@ -148,16 +148,18 @@ export async function syncLocalToCloud(userId: string): Promise<number> {
   }
 }
 
-export async function syncCloudToLocal(userId: string): Promise<number> {
+export async function syncCloudToLocal(userId: string): Promise<{ profileFound: boolean; logsCount: number }> {
   const fb = initFirebase();
-  if (!fb || !firestoreInstance) return 0;
+  if (!fb || !firestoreInstance) return { profileFound: false, logsCount: 0 };
 
   try {
+    let profileFound = false;
     // 1. Fetch Cloud Profile
     const profileSnap = await getDoc(doc(firestoreInstance, 'users', userId));
     if (profileSnap.exists()) {
       const data = profileSnap.data() as UserProfile;
       await saveProfile(data);
+      profileFound = true;
     }
 
     // 2. Fetch all Cloud Daily Logs
@@ -171,7 +173,7 @@ export async function syncCloudToLocal(userId: string): Promise<number> {
       count++;
     }
 
-    return count;
+    return { profileFound, logsCount: count };
   } catch (err) {
     console.error('Error downloading cloud data to local:', err);
     throw err;
