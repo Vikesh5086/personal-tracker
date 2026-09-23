@@ -13,7 +13,15 @@ import {
 import { useApp, NavTab } from '../../context/AppContext';
 
 export const Sidebar: React.FC = () => {
-  const { activeTab, setActiveTab, currentDayNumber, gamification } = useApp();
+  const {
+    activeTab,
+    setActiveTab,
+    currentDayNumber,
+    gamification,
+    firebaseUser,
+    logoutAction,
+    loginWithGoogleAction,
+  } = useApp();
 
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string | number }[] = [
     { id: 'dashboard', label: 'Daily Habits', icon: <CheckSquare className="w-5 h-5" /> },
@@ -119,6 +127,46 @@ export const Sidebar: React.FC = () => {
         </div>
         <div className="text-[10px] text-slate-400 mt-1 text-right">
           {gamification.xpToNextLevel} XP to Level {gamification.level + 1}
+        </div>
+
+        {/* Account Info & Logout */}
+        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+          {firebaseUser ? (
+            <>
+              <div className="flex items-center gap-2 min-w-0 pr-1">
+                {firebaseUser.photoURL ? (
+                  <img src={firebaseUser.photoURL} alt="Avatar" className="w-5 h-5 rounded-full shrink-0 border border-indigo-500/40" />
+                ) : (
+                  <div className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                    {(firebaseUser.displayName || firebaseUser.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
+                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 truncate">
+                  {firebaseUser.email?.split('@')[0]}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm(`Log out of ${firebaseUser.email} and switch account?`)) {
+                    logoutAction();
+                  }
+                }}
+                className="text-[10px] font-bold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
+                title="Log Out / Switch Account"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={loginWithGoogleAction}
+              className="w-full py-1.5 px-2 rounded-xl bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 transition-colors text-center"
+            >
+              Sign In with Google
+            </button>
+          )}
         </div>
       </div>
     </aside>

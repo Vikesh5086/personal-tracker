@@ -13,6 +13,7 @@ import {
   saveDailyLog,
   getAllDailyLogs,
   createEmptyDailyLog,
+  clearAllDatabaseData,
 } from '../services/db';
 import { calculateGamification } from '../services/gamification';
 import {
@@ -376,8 +377,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [loadData]);
 
   const logoutAction = useCallback(async () => {
-    await logoutUser();
-    setFirebaseUser(null);
+    try {
+      await logoutUser();
+      setFirebaseUser(null);
+      await clearAllDatabaseData();
+      localStorage.removeItem('last_cloud_sync_time');
+      setProfile(null);
+      setAllLogs([]);
+      setCurrentLog(null);
+      setShowOnboarding(true);
+    } catch (err: any) {
+      console.error('Logout error:', err);
+    }
   }, []);
 
   const syncCloudData = useCallback(async () => {

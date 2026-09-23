@@ -12,6 +12,8 @@ import {
   Volume2,
   VolumeX,
   Sparkles,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getRandomQuote } from '../../services/quotes';
@@ -31,6 +33,9 @@ export const AppHeader: React.FC = () => {
     setActiveTab,
     refreshAllLogs,
     fireConfetti,
+    firebaseUser,
+    loginWithGoogleAction,
+    logoutAction,
   } = useApp();
 
   const [quote, setQuote] = useState(getRandomQuote);
@@ -240,6 +245,36 @@ export const AppHeader: React.FC = () => {
           >
             <SettingsIcon className="w-4 h-4" />
           </button>
+
+          {/* Account / Log Out / Sign In Button */}
+          {firebaseUser ? (
+            <button
+              onClick={() => {
+                sounds.playTap();
+                if (window.confirm(`Currently connected as:\n${firebaseUser.email}\n\nDo you want to log out and switch to another Google account?`)) {
+                  logoutAction();
+                }
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition-all text-xs font-bold"
+              title={`Connected as ${firebaseUser.email} (Click to Log Out / Switch Account)`}
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden lg:inline max-w-[90px] truncate">{firebaseUser.email?.split('@')[0]}</span>
+              <span className="text-[10px] hidden sm:inline opacity-80 font-normal">Logout</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                sounds.playTap();
+                loginWithGoogleAction();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-bold shadow-sm shadow-indigo-600/20"
+              title="Sign in with Google to sync across devices"
+            >
+              <LogIn className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline">Sign In</span>
+            </button>
+          )}
         </div>
       </div>
 
