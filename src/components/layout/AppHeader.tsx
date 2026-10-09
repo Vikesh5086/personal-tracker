@@ -147,33 +147,33 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setActiveTab('settings');
             }}
-            className="relative cursor-pointer group shrink-0 w-14 h-14"
+            className="relative cursor-pointer group shrink-0 w-12 h-12"
             title="Account Settings"
           >
-            <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 border-2 border-indigo-500/40 flex items-center justify-center shadow-lg shadow-indigo-500/10 group-hover:border-indigo-400 transition-all shrink-0">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-900 border border-white/[0.12] flex items-center justify-center shadow-md group-hover:border-white/30 transition-all shrink-0">
               {profile?.profilePhoto ? (
                 <img
                   src={profile.profilePhoto}
                   alt={profile.name}
-                  className="w-14 h-14 object-cover group-hover:scale-105 transition-transform rounded-2xl block"
+                  className="w-12 h-12 object-cover group-hover:scale-105 transition-transform block"
                 />
               ) : (
-                <User className="w-6 h-6 text-indigo-500" />
+                <User className="w-5 h-5 text-zinc-400" />
               )}
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 shadow-sm" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#090d16] shadow-sm" />
           </div>
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
               <span>{greeting}</span>
             </h1>
-            <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-              <span className="font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-md">
-                Day {currentDayNumber} of 100
+            <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-400 font-mono">
+              <span className="font-bold text-white bg-white/[0.08] px-2 py-0.5 rounded border border-white/[0.08]">
+                DAY {String(currentDayNumber).padStart(3, '0')} // 100
               </span>
               <span>•</span>
-              <span className="truncate max-w-[200px] sm:max-w-xs font-medium">{profile?.goal || '100-Day Journey'}</span>
+              <span className="truncate max-w-[200px] sm:max-w-xs text-zinc-300 font-normal">{profile?.goal || 'Personal Challenge'}</span>
             </div>
           </div>
         </div>
@@ -185,13 +185,13 @@ export const AppHeader: React.FC = () => {
           <div
             onClick={() => {
               sounds.playTap();
-              setActiveTab('gamification');
+              setActiveTab('overview');
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold cursor-pointer transition-all hover:scale-105 ${flameStyle.badgeBg}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-xs font-mono font-bold cursor-pointer transition-all hover:border-white/20 text-white"
             title={`Current streak: ${gamification.currentStreak} days`}
           >
-            <Flame className={`w-4 h-4 ${flameStyle.glowClass}`} />
-            <span>{gamification.currentStreak} {gamification.currentStreak === 1 ? 'Day' : 'Days'}</span>
+            <Flame className="w-4 h-4 text-orange-500" />
+            <span>{gamification.currentStreak}d Streak</span>
           </div>
 
           {/* Level & XP Pill */}
@@ -200,35 +200,37 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setActiveTab('gamification');
             }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer hover:border-indigo-500/50 transition-all hover:scale-105"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-xs font-mono font-bold text-zinc-200 cursor-pointer hover:border-white/20 transition-all"
             title={`${gamification.totalXp} Total XP (${gamification.xpToNextLevel} XP to Level ${gamification.level + 1})`}
           >
-            <div className="flex items-center gap-1 text-amber-500">
-              <Award className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-amber-400">
+              <Award className="w-3.5 h-3.5" />
               <span>Lvl {gamification.level}</span>
             </div>
-            <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700" />
-            <span className="text-indigo-600 dark:text-indigo-400 font-extrabold font-mono">
+            <div className="h-3 w-[1px] bg-white/[0.1]" />
+            <span className="font-extrabold text-white">
               {gamification.totalXp} XP
             </span>
           </div>
 
           {/* Sound Toggle */}
           <button
+            type="button"
             onClick={toggleSound}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors"
+            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
             title={soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-500" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-zinc-500" />}
           </button>
 
           {/* Dark / Light Toggle */}
           <button
+            type="button"
             onClick={() => {
               sounds.playTap();
               toggleTheme();
             }}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
             title={`Switch to ${themeMode === 'dark' ? 'Light' : 'Dark'} Mode`}
           >
             {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -236,11 +238,12 @@ export const AppHeader: React.FC = () => {
 
           {/* Settings Button */}
           <button
+            type="button"
             onClick={() => {
               sounds.playTap();
               setActiveTab('settings');
             }}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
             title="Settings"
           >
             <SettingsIcon className="w-4 h-4" />
@@ -249,26 +252,28 @@ export const AppHeader: React.FC = () => {
           {/* Account / Log Out / Sign In Button */}
           {firebaseUser ? (
             <button
+              type="button"
               onClick={() => {
                 sounds.playTap();
                 if (window.confirm(`Currently connected as:\n${firebaseUser.email}\n\nDo you want to log out and switch to another Google account?`)) {
                   logoutAction();
                 }
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition-all text-xs font-bold"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/90 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-mono font-bold"
               title={`Connected as ${firebaseUser.email} (Click to Log Out / Switch Account)`}
             >
               <LogOut className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden lg:inline max-w-[90px] truncate">{firebaseUser.email?.split('@')[0]}</span>
+              <span className="hidden lg:inline max-w-[80px] truncate">{firebaseUser.email?.split('@')[0]}</span>
               <span className="text-[10px] hidden sm:inline opacity-80 font-normal">Logout</span>
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => {
                 sounds.playTap();
                 loginWithGoogleAction();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-bold shadow-sm shadow-indigo-600/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 text-zinc-950 hover:bg-white transition-all text-xs font-mono font-bold shadow-sm"
               title="Sign in with Google to sync across devices"
             >
               <LogIn className="w-3.5 h-3.5 shrink-0" />
@@ -279,12 +284,13 @@ export const AppHeader: React.FC = () => {
       </div>
 
       {/* Date Navigation & Quote Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-2xl glass-card">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-md">
         {/* Date Selector Navigation */}
         <div className="flex items-center gap-1.5 self-center sm:self-auto">
           <button
+            type="button"
             onClick={() => handleShiftDate(-1)}
-            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-xl bg-zinc-900 border border-white/[0.06] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors font-mono"
             title="Previous Day (or Left Arrow key)"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -298,13 +304,14 @@ export const AppHeader: React.FC = () => {
                 sounds.playTap();
                 setCurrentDate(e.target.value);
               }}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer font-mono"
+              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/[0.1] text-white focus:outline-none focus:ring-1 focus:ring-white/30 cursor-pointer"
             />
           </div>
 
           <button
+            type="button"
             onClick={() => handleShiftDate(1)}
-            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-xl bg-zinc-900 border border-white/[0.06] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors font-mono"
             title="Next Day (or Right Arrow key)"
           >
             <ChevronRight className="w-4 h-4" />
@@ -312,33 +319,35 @@ export const AppHeader: React.FC = () => {
 
           {!isToday && (
             <button
+              type="button"
               onClick={() => {
                 sounds.playTap();
                 setCurrentDate(todayDate);
               }}
-              className="ml-1 px-2.5 py-1 rounded-xl text-xs font-extrabold bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all"
+              className="ml-1 px-3 py-1 rounded-xl text-xs font-mono font-black bg-zinc-100 text-zinc-950 hover:bg-white shadow-sm transition-all"
               title="Jump to Today (press 'T')"
             >
-              Today
+              TODAY
             </button>
           )}
 
-          <span className="text-xs font-bold text-slate-400 ml-1">
+          <span className="text-xs font-mono text-zinc-500 ml-1">
             (Day {currentDayNumber})
           </span>
         </div>
 
         {/* Motivational Quote with Refresh */}
-        <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-slate-500 dark:text-slate-400 italic border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800">
-          <span className="truncate max-w-md">
-            "{quote.text}" — <span className="font-semibold not-italic text-slate-700 dark:text-slate-300">{quote.author}</span>
+        <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-zinc-400 italic border-t sm:border-t-0 pt-2 sm:pt-0 border-white/[0.06]">
+          <span className="truncate max-w-md font-sans">
+            "{quote.text}" — <span className="font-semibold not-italic text-zinc-300">{quote.author}</span>
           </span>
           <button
+            type="button"
             onClick={() => {
               sounds.playTap();
               setQuote(getRandomQuote());
             }}
-            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0 hover:rotate-180 transition-transform duration-300"
+            className="p-1 text-zinc-500 hover:text-white shrink-0 hover:rotate-180 transition-transform duration-300"
             title="New quote"
           >
             <RefreshCw className="w-3.5 h-3.5" />

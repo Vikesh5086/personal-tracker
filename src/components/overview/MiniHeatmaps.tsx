@@ -20,7 +20,7 @@ export const MiniHeatmaps: React.FC = () => {
   const logsMap = new Map<string, DailyLog>();
   allLogs.forEach((l) => logsMap.set(l.date, l));
 
-  // We show the past 28 days (4 weeks) for each habit
+  // 28 days (4 weeks) ending today
   const days: string[] = [];
   const end = new Date(todayDate + 'T00:00:00');
   for (let i = 27; i >= 0; i--) {
@@ -32,64 +32,69 @@ export const MiniHeatmaps: React.FC = () => {
   const grids: MiniGridConfig[] = [
     {
       id: 'dsa',
-      name: 'DSA / LeetCode',
-      color: 'text-purple-500',
-      icon: <Code2 className="w-4 h-4 text-purple-500" />,
-      activeColor: 'bg-purple-500 shadow-sm shadow-purple-500/50',
+      name: 'DSA Practice',
+      color: 'text-purple-400',
+      icon: <Code2 className="w-3.5 h-3.5 text-purple-400" />,
+      activeColor: 'bg-purple-500 shadow-[0_0_6px_rgba(168,85,247,0.5)]',
       check: (log) => log.dsa.completed || log.dsa.questionsSolved > 0,
     },
     {
       id: 'workout',
-      name: 'Workout & Fitness',
-      color: 'text-orange-500',
-      icon: <Dumbbell className="w-4 h-4 text-orange-500" />,
-      activeColor: 'bg-orange-500 shadow-sm shadow-orange-500/50',
+      name: 'Fitness & Workout',
+      color: 'text-orange-400',
+      icon: <Dumbbell className="w-3.5 h-3.5 text-orange-400" />,
+      activeColor: 'bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.5)]',
       check: (log) => log.workout.completed || (log.workout.type !== 'None' && log.workout.type !== undefined),
     },
     {
       id: 'water',
-      name: 'Water (2L+)',
-      color: 'text-cyan-500',
-      icon: <Droplet className="w-4 h-4 text-cyan-500" />,
-      activeColor: 'bg-cyan-500 shadow-sm shadow-cyan-500/50',
+      name: 'Hydration (2L+)',
+      color: 'text-cyan-400',
+      icon: <Droplet className="w-3.5 h-3.5 text-cyan-400" />,
+      activeColor: 'bg-cyan-500 shadow-[0_0_6px_rgba(6,182,212,0.5)]',
       check: (log) => log.water.completed || log.water.intakeLitres >= 2.0,
     },
     {
       id: 'sleep',
       name: 'Sleep (7h+)',
-      color: 'text-indigo-500',
-      icon: <Moon className="w-4 h-4 text-indigo-500" />,
-      activeColor: 'bg-indigo-500 shadow-sm shadow-indigo-500/50',
+      color: 'text-indigo-400',
+      icon: <Moon className="w-3.5 h-3.5 text-indigo-400" />,
+      activeColor: 'bg-indigo-500 shadow-[0_0_6px_rgba(99,102,241,0.5)]',
       check: (log) => log.sleep.completed || log.sleep.durationHours >= 7.0,
     },
     {
       id: 'aiml',
-      name: 'AI / ML Study',
-      color: 'text-blue-500',
-      icon: <Brain className="w-4 h-4 text-blue-500" />,
-      activeColor: 'bg-blue-500 shadow-sm shadow-blue-500/50',
+      name: 'AI / ML Studies',
+      color: 'text-blue-400',
+      icon: <Brain className="w-3.5 h-3.5 text-blue-400" />,
+      activeColor: 'bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.5)]',
       check: (log) => Boolean(log.aiMl.completed || (log.aiMl.topic && log.aiMl.topic.trim().length > 0)),
     },
     {
       id: 'eating',
       name: 'Clean Nutrition',
-      color: 'text-emerald-500',
-      icon: <Apple className="w-4 h-4 text-emerald-500" />,
-      activeColor: 'bg-emerald-500 shadow-sm shadow-emerald-500/50',
+      color: 'text-emerald-400',
+      icon: <Apple className="w-3.5 h-3.5 text-emerald-400" />,
+      activeColor: 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]',
       check: (log) => Boolean(log.eating.completed || log.eating.type === 'Healthy'),
     },
   ];
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white">
-          Habit Streak Grids (Last 4 Weeks)
-        </h3>
-        <span className="text-xs text-slate-400">28-Day Consistency</span>
+    <div className="space-y-3.5">
+      <div className="flex items-center justify-between pb-1">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded">
+            MATRIX
+          </span>
+          <h3 className="text-sm font-mono font-bold tracking-tight text-white uppercase">
+            Core Habit Trails // Last 28 Days
+          </h3>
+        </div>
+        <span className="text-xs font-mono text-zinc-500">4-Week Trajectory</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {grids.map((grid) => {
           let activeCount = 0;
           days.forEach((dateStr) => {
@@ -101,39 +106,39 @@ export const MiniHeatmaps: React.FC = () => {
           return (
             <div
               key={grid.id}
-              className="p-4 rounded-2xl glass-card border border-slate-200 dark:border-white/10"
+              className="p-4 rounded-xl bg-[#0b0f19] border border-white/[0.08] shadow-md hover:border-white/20 transition-all"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 font-mono">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <div className="p-1 rounded bg-zinc-900 border border-white/[0.08]">
                     {grid.icon}
                   </div>
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <span className="text-xs font-bold text-zinc-200">
                     {grid.name}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-extrabold font-mono text-slate-800 dark:text-slate-200">
+                  <span className="text-xs font-black text-white font-mono">
                     {activeCount}/28d
                   </span>
-                  <span className="text-[10px] text-slate-400 ml-1">({rate}%)</span>
+                  <span className="text-[10px] text-zinc-500 ml-1">({rate}%)</span>
                 </div>
               </div>
 
-              {/* 28 cells: 4 rows of 7 days */}
-              <div className="grid grid-cols-7 gap-1.5">
+              {/* 28 GitHub-style micro-squares (4 rows x 7 days) */}
+              <div className="grid grid-cols-7 gap-1.5 pt-0.5">
                 {days.map((dateStr) => {
                   const log = logsMap.get(dateStr);
                   const isDone = Boolean(log && grid.check(log));
                   return (
                     <div
                       key={dateStr}
-                      className={`h-4 rounded-md transition-all ${
+                      className={`h-3.5 rounded-[3px] transition-all ${
                         isDone
                           ? grid.activeColor
-                          : 'bg-slate-200 dark:bg-slate-800'
+                          : 'bg-zinc-800/60 border border-white/[0.04]'
                       }`}
-                      title={`${dateStr}: ${isDone ? 'Completed' : 'Missed'}`}
+                      title={`${dateStr}: ${isDone ? 'Locked' : 'Missed'}`}
                     />
                   );
                 })}

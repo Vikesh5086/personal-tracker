@@ -68,130 +68,123 @@ export const DailyDashboard: React.FC = () => {
       {/* Prominent, Big Inspiring Daily Motivational Quote Hero */}
       <QuoteHeroBanner />
 
-      {/* Daily Progress Banner */}
-      <div className={`p-5 sm:p-6 rounded-3xl glass-panel relative overflow-hidden shadow-xl border transition-all duration-300 ${
+      {/* Daily Progress Discipline Console */}
+      <div className={`p-5 sm:p-6 rounded-2xl bg-[#0b0f19] border transition-all duration-300 shadow-xl ${
         isPerfect
-          ? 'border-amber-400/50 shadow-amber-500/10 ring-1 ring-amber-400/30'
-          : 'border-slate-200/80 dark:border-white/10'
+          ? 'border-amber-400/40 shadow-amber-500/5 ring-1 ring-amber-400/20'
+          : 'border-white/[0.08]'
       }`}>
-        {/* Ambient Top Glow Line */}
-        <div className={`absolute top-0 left-0 right-0 h-1.5 transition-all duration-500 ${
-          isPerfect
-            ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500'
-            : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400'
-        }`} />
-
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="space-y-1.5">
+          <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2">
-              <span className={`text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${
+              <span className={`font-mono text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-md border ${
                 isPerfect
-                  ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30'
-                  : 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'
+                  ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
+                  : 'bg-white/[0.05] text-zinc-300 border-white/[0.08]'
               }`}>
-                Day {currentDayNumber} Focus
+                PROTOCOL // DAY {String(currentDayNumber).padStart(3, '0')}
               </span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-zinc-500 font-mono">
                 {currentDate}
               </span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2.5 flex-wrap">
-              <span>Daily Completion: {completion}%</span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-mono">
+                {completion}% COMPLETED
+              </h2>
               {isPerfect && (
-                <span className="shimmer-badge text-xs uppercase tracking-widest font-black px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-lg shadow-amber-500/30 flex items-center gap-1.5 animate-bounce">
-                  <Trophy className="w-4 h-4 fill-slate-950" />
-                  PERFECT DAY!
+                <span className="font-mono text-xs uppercase tracking-widest font-black px-2.5 py-1 rounded-md bg-amber-400 text-zinc-950 flex items-center gap-1.5 shadow-sm">
+                  <Trophy className="w-3.5 h-3.5 fill-zinc-950" />
+                  PERFECT DAY LOCKED
                 </span>
               )}
-            </h2>
+            </div>
 
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-zinc-400 max-w-xl">
               {completion === 100
-                ? 'Flawless execution! All 10 habits locked in for today. +150 Bonus XP awarded! 🚀'
+                ? 'All 10 protocols locked in for today. Flawless discipline streak maintained. +150 Bonus XP awarded.'
                 : completion >= 60
-                ? 'Strong momentum! Just a couple habits left to hit a 100% perfect day.'
-                : 'Every single rep counts. Check off your habits below to build streak momentum and earn XP.'}
+                ? 'Over halfway through today\'s protocols. Execute the remaining habits to secure a 100% perfect day.'
+                : 'Every single rep counts. Check off your core habits below to build uninterrupted consistency.'}
             </p>
 
             {/* Quick Action Pills */}
-            <div className="flex items-center gap-2 pt-2 flex-wrap">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="flex items-center gap-2 pt-1 flex-wrap">
+              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider">
                 Quick Log:
               </span>
               <button
+                type="button"
                 onClick={handleQuickAddDsa}
-                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 flex items-center gap-1 transition-all active:scale-95"
+                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-zinc-900 border border-white/[0.08] text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-1.5 transition-all active:scale-95"
               >
-                <Code2 className="w-3.5 h-3.5" />
-                <span>+1 DSA Problem</span>
+                <Code2 className="w-3.5 h-3.5 text-purple-400" />
+                <span>+1 DSA</span>
               </button>
               <button
+                type="button"
                 onClick={handleQuickAddWater}
-                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/20 flex items-center gap-1 transition-all active:scale-95"
+                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-zinc-900 border border-white/[0.08] text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-1.5 transition-all active:scale-95"
               >
-                <Droplet className="w-3.5 h-3.5" />
+                <Droplet className="w-3.5 h-3.5 text-cyan-400" />
                 <span>+250ml Water</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Metrics & Radial Ring */}
-          <div className="flex items-center gap-4 self-start lg:self-auto shrink-0">
-            <div className="text-center px-4 py-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 shadow-inner">
-              <span className="text-[10px] uppercase font-bold text-indigo-400 block">
-                XP Today
+          {/* Telemetry Telemetry Block */}
+          <div className="flex items-center gap-4 self-start lg:self-auto shrink-0 bg-zinc-900/60 border border-white/[0.06] p-4 rounded-xl font-mono">
+            <div>
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">
+                Discipline Lock
               </span>
-              <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono">
-                +{currentLog.xpEarned}
+              <span className="text-2xl font-black text-white">
+                {Math.round((completion / 100) * 10)} <span className="text-xs text-zinc-500 font-normal">/ 10</span>
               </span>
             </div>
-
-            {/* Circular Gauge */}
-            <div className="relative w-18 h-18 flex items-center justify-center">
-              <svg className="w-18 h-18 -rotate-90" viewBox="0 0 36 36">
-                <path
-                  className="text-slate-200 dark:text-slate-800"
-                  strokeWidth="3.5"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  className={`${
-                    isPerfect ? 'text-amber-400' : 'text-indigo-500'
-                  } transition-all duration-700`}
-                  strokeDasharray={`${completion}, 100`}
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-              <span className="absolute text-sm font-black font-mono text-slate-800 dark:text-white">
-                {completion}%
+            <div className="h-8 w-[1px] bg-white/[0.08]" />
+            <div>
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">
+                Today XP
+              </span>
+              <span className="text-2xl font-black text-amber-400">
+                +{currentLog.xpEarned}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Linear progress bar */}
-        <div className="mt-4 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700/60 overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${
-              isPerfect
-                ? 'bg-gradient-to-r from-amber-400 to-yellow-300'
-                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400'
-            }`}
-            style={{ width: `${completion}%` }}
-          />
-        </div>
+        {/* 10-Segmented Protocol Progress Track (GitHub-inspired tactile bars) */}
+        <div className="mt-5 space-y-2">
+          <div className="grid grid-cols-10 gap-1.5 sm:gap-2">
+            {Array.from({ length: 10 }).map((_, index) => {
+              const activeCount = Math.round((completion / 100) * 10);
+              const isFilled = index < activeCount;
+              return (
+                <div
+                  key={`seg-${index}`}
+                  className={`h-2 sm:h-2.5 rounded-sm transition-all duration-300 ${
+                    isFilled
+                      ? isPerfect
+                        ? 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]'
+                        : 'shadow-[0_0_6px_rgba(var(--primary-accent-rgb),0.5)]'
+                      : 'bg-zinc-800/80 border border-white/[0.04]'
+                  }`}
+                  style={{
+                    backgroundColor: isFilled && !isPerfect ? 'var(--primary-accent)' : undefined,
+                  }}
+                  title={`Protocol ${index + 1}: ${isFilled ? 'Locked' : 'Pending'}`}
+                />
+              );
+            })}
+          </div>
 
-        {/* Hotkeys reminder banner */}
-        <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-mono">
-          <span>Hotkeys: [← / →] Shift Day • [T] Today</span>
-          <span>10 Core Habits Total</span>
+          {/* Telemetry info bar */}
+          <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono pt-1">
+            <span>[← / →] Shift Day • [T] Jump to Today</span>
+            <span>10 Core Protocols Daily</span>
+          </div>
         </div>
       </div>
 
@@ -229,16 +222,16 @@ export const DailyDashboard: React.FC = () => {
       </div>
 
       {/* Quick Footer Links */}
-      <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <span className="text-slate-500 dark:text-slate-400">
-          Want to log extra routines like Screen Time, Steps, Reading, or Interview Prep?
+      <div className="p-4 rounded-xl bg-zinc-900/60 border border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <span className="text-zinc-400">
+          Looking for Extra Routines (Screen Time, Steps, Reading, Interview Prep)?
         </span>
         <button
           onClick={() => {
             sounds.playTap();
             setActiveTab('extras');
           }}
-          className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+          className="font-bold text-white hover:text-emerald-400 hover:underline flex items-center gap-1.5 transition-colors"
         >
           <span>Open Extra Trackers</span>
           <ArrowRight className="w-3.5 h-3.5" />

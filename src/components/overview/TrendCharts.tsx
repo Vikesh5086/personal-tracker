@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Droplet, Moon, Dumbbell, Code2, TrendingUp } from 'lucide-react';
+import { Droplet, Moon, Dumbbell, Code2, TrendingUp, BarChart2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DailyLog } from '../../types';
 
@@ -74,62 +74,61 @@ export const TrendCharts: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-indigo-500" />
-            <span>Progress & Habit Trends</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-1">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded">
+            TELEMETRY
+          </span>
+          <h3 className="text-sm font-mono font-bold tracking-tight text-white uppercase">
+            Habit Trajectory & Distribution
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Real-time analytics for sleep patterns, hydration, workouts, and problem solving.
-          </p>
         </div>
 
         {/* Range Selector */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+        <div className="inline-flex items-center p-1 rounded-xl bg-zinc-900 border border-white/[0.08] font-mono text-xs">
           {([7, 14, 30] as const).map((r) => (
             <button
               key={r}
               onClick={() => setRangeDays(r)}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
                 rangeDays === r
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-zinc-100 text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              {r} Days
+              {r}d Window
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Chart 1: Water Intake Trend */}
-        <div className="p-5 rounded-3xl glass-card border border-slate-200 dark:border-white/10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-5 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between mb-4 font-mono">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-                <Droplet className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                <Droplet className="w-3.5 h-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Water Intake</h4>
-                <span className="text-[11px] text-slate-400">Target: 2.5 Litres/day</span>
+                <h4 className="text-xs font-bold text-white uppercase">Hydration Track</h4>
+                <span className="text-[10px] text-zinc-500">Target: 2.5L / day</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-cyan-500">
+            <span className="text-xs font-mono font-bold text-cyan-400">
               Avg: {(waterData.reduce((acc, d) => acc + d.value, 0) / rangeDays).toFixed(1)}L
             </span>
           </div>
 
           {/* SVG Bar Chart */}
-          <div className="h-40 flex items-end gap-1 sm:gap-2 pt-6 pb-2 border-b border-slate-100 dark:border-slate-800 relative">
+          <div className="h-36 flex items-end gap-1 sm:gap-1.5 pt-6 pb-2 border-b border-white/[0.06] relative">
             {/* Target 2.5L line */}
             <div
-              className="absolute left-0 right-0 border-b border-dashed border-cyan-500/50 pointer-events-none flex items-center justify-end"
+              className="absolute left-0 right-0 border-b border-dashed border-cyan-500/40 pointer-events-none flex items-center justify-end"
               style={{ bottom: `${(2.5 / maxWater) * 100}%` }}
             >
-              <span className="text-[9px] font-bold text-cyan-500 bg-white/80 dark:bg-slate-900/80 px-1 rounded -translate-y-2">
-                2.5L
+              <span className="text-[9px] font-mono font-bold text-cyan-400 bg-zinc-900 px-1 rounded -translate-y-2 border border-cyan-500/30">
+                2.5L Target
               </span>
             </div>
 
@@ -139,24 +138,24 @@ export const TrendCharts: React.FC = () => {
               return (
                 <div key={d.date} className="flex-1 flex flex-col items-center h-full justify-end group relative">
                   <div
-                    className={`w-full rounded-t-md transition-all duration-300 ${
+                    className={`w-full rounded-t-[2px] transition-all duration-300 ${
                       hitTarget
-                        ? 'bg-cyan-500 hover:bg-cyan-400'
+                        ? 'bg-cyan-500 hover:bg-cyan-400 shadow-[0_0_4px_rgba(6,182,212,0.4)]'
                         : d.value > 0
                         ? 'bg-cyan-500/40 hover:bg-cyan-500/60'
-                        : 'bg-slate-200 dark:bg-slate-800'
+                        : 'bg-zinc-800/60'
                     }`}
                     style={{ height: `${Math.max(4, heightPercent)}%` }}
                   />
                   {/* Tooltip */}
-                  <div className="absolute -top-7 hidden group-hover:flex px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
+                  <div className="absolute -top-7 hidden group-hover:flex px-2 py-0.5 rounded bg-zinc-900 border border-white/[0.1] text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
                     {d.label}: {d.value}L
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-mono">
+          <div className="flex justify-between text-[10px] text-zinc-500 mt-2 font-mono">
             <span>{waterData[0]?.label}</span>
             <span>{waterData[Math.floor(waterData.length / 2)]?.label}</span>
             <span>{waterData[waterData.length - 1]?.label}</span>
@@ -164,31 +163,31 @@ export const TrendCharts: React.FC = () => {
         </div>
 
         {/* Chart 2: Sleep Pattern Trend */}
-        <div className="p-5 rounded-3xl glass-card border border-slate-200 dark:border-white/10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-5 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between mb-4 font-mono">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                <Moon className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                <Moon className="w-3.5 h-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Sleep Duration</h4>
-                <span className="text-[11px] text-slate-400">Optimal: 7.5 - 8.5 Hours</span>
+                <h4 className="text-xs font-bold text-white uppercase">Sleep Recovery</h4>
+                <span className="text-[10px] text-zinc-500">Target: 7.5 - 8.5 Hours</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-indigo-500">
+            <span className="text-xs font-mono font-bold text-indigo-400">
               Avg: {(sleepData.reduce((acc, d) => acc + d.value, 0) / rangeDays).toFixed(1)}h
             </span>
           </div>
 
-          {/* Sleep SVG line/bar chart */}
-          <div className="h-40 flex items-end gap-1 sm:gap-2 pt-6 pb-2 border-b border-slate-100 dark:border-slate-800 relative">
+          {/* Sleep Bar Chart */}
+          <div className="h-36 flex items-end gap-1 sm:gap-1.5 pt-6 pb-2 border-b border-white/[0.06] relative">
             {/* Target 7.5h line */}
             <div
-              className="absolute left-0 right-0 border-b border-dashed border-indigo-500/50 pointer-events-none flex items-center justify-end"
+              className="absolute left-0 right-0 border-b border-dashed border-indigo-500/40 pointer-events-none flex items-center justify-end"
               style={{ bottom: `${(7.5 / maxSleep) * 100}%` }}
             >
-              <span className="text-[9px] font-bold text-indigo-500 bg-white/80 dark:bg-slate-900/80 px-1 rounded -translate-y-2">
-                7.5h
+              <span className="text-[9px] font-mono font-bold text-indigo-400 bg-zinc-900 px-1 rounded -translate-y-2 border border-indigo-500/30">
+                7.5h Target
               </span>
             </div>
 
@@ -198,25 +197,25 @@ export const TrendCharts: React.FC = () => {
               return (
                 <div key={d.date} className="flex-1 flex flex-col items-center h-full justify-end group relative">
                   <div
-                    className={`w-full rounded-t-md transition-all duration-300 ${
+                    className={`w-full rounded-t-[2px] transition-all duration-300 ${
                       optimal
-                        ? 'bg-indigo-500 hover:bg-indigo-400'
+                        ? 'bg-indigo-500 hover:bg-indigo-400 shadow-[0_0_4px_rgba(99,102,241,0.4)]'
                         : d.value >= 6.0
                         ? 'bg-indigo-400/50 hover:bg-indigo-400/70'
                         : d.value > 0
-                        ? 'bg-rose-500/60 hover:bg-rose-500'
-                        : 'bg-slate-200 dark:bg-slate-800'
+                        ? 'bg-rose-500/50 hover:bg-rose-500'
+                        : 'bg-zinc-800/60'
                     }`}
                     style={{ height: `${Math.max(4, heightPercent)}%` }}
                   />
-                  <div className="absolute -top-7 hidden group-hover:flex px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
+                  <div className="absolute -top-7 hidden group-hover:flex px-2 py-0.5 rounded bg-zinc-900 border border-white/[0.1] text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
                     {d.label}: {d.value}h
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-mono">
+          <div className="flex justify-between text-[10px] text-zinc-500 mt-2 font-mono">
             <span>{sleepData[0]?.label}</span>
             <span>{sleepData[Math.floor(sleepData.length / 2)]?.label}</span>
             <span>{sleepData[sleepData.length - 1]?.label}</span>
@@ -224,24 +223,24 @@ export const TrendCharts: React.FC = () => {
         </div>
 
         {/* Chart 3: Workout Split Breakdown */}
-        <div className="p-5 rounded-3xl glass-card border border-slate-200 dark:border-white/10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-5 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between mb-4 font-mono">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400">
-                <Dumbbell className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-400">
+                <Dumbbell className="w-3.5 h-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Workout Type Split</h4>
-                <span className="text-[11px] text-slate-400">Training Distribution</span>
+                <h4 className="text-xs font-bold text-white uppercase">Workout Distribution</h4>
+                <span className="text-[10px] text-zinc-500">Training Split Volume</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-orange-500">
-              {strengthCount + cardioCount + bothCount} Active Days
+            <span className="text-xs font-mono font-bold text-orange-400">
+              {strengthCount + cardioCount + bothCount} Active Sessions
             </span>
           </div>
 
           {/* Segmented bar */}
-          <div className="h-6 w-full rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex my-4">
+          <div className="h-5 w-full rounded-lg bg-zinc-800 overflow-hidden flex my-3.5 border border-white/[0.04]">
             <div
               className="bg-orange-500 h-full transition-all"
               style={{ width: `${(strengthCount / totalWorkoutLogs) * 100}%` }}
@@ -265,69 +264,69 @@ export const TrendCharts: React.FC = () => {
           </div>
 
           {/* Legend Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20">
-              <span className="text-[10px] uppercase font-bold text-orange-600 dark:text-orange-400 block">Strength</span>
-              <span className="text-base font-black font-mono text-slate-800 dark:text-white">{strengthCount}</span>
-              <span className="text-[10px] text-slate-400 block">days</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono">
+            <div className="p-2.5 rounded-xl bg-zinc-900 border border-white/[0.06]">
+              <span className="text-[10px] uppercase font-bold text-orange-400 block">Strength</span>
+              <span className="text-base font-black text-white">{strengthCount}</span>
+              <span className="text-[9px] text-zinc-500 block">days</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
-              <span className="text-[10px] uppercase font-bold text-amber-600 dark:text-amber-400 block">Cardio</span>
-              <span className="text-base font-black font-mono text-slate-800 dark:text-white">{cardioCount}</span>
-              <span className="text-[10px] text-slate-400 block">days</span>
+            <div className="p-2.5 rounded-xl bg-zinc-900 border border-white/[0.06]">
+              <span className="text-[10px] uppercase font-bold text-amber-400 block">Cardio</span>
+              <span className="text-base font-black text-white">{cardioCount}</span>
+              <span className="text-[9px] text-zinc-500 block">days</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <span className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 block">Both</span>
-              <span className="text-base font-black font-mono text-slate-800 dark:text-white">{bothCount}</span>
-              <span className="text-[10px] text-slate-400 block">days</span>
+            <div className="p-2.5 rounded-xl bg-zinc-900 border border-white/[0.06]">
+              <span className="text-[10px] uppercase font-bold text-purple-400 block">Both</span>
+              <span className="text-base font-black text-white">{bothCount}</span>
+              <span className="text-[9px] text-zinc-500 block">days</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-              <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 block">Rest Days</span>
-              <span className="text-base font-black font-mono text-slate-800 dark:text-white">{restCount}</span>
-              <span className="text-[10px] text-slate-400 block">days</span>
+            <div className="p-2.5 rounded-xl bg-zinc-900 border border-white/[0.06]">
+              <span className="text-[10px] uppercase font-bold text-emerald-400 block">Rest</span>
+              <span className="text-base font-black text-white">{restCount}</span>
+              <span className="text-[9px] text-zinc-500 block">days</span>
             </div>
           </div>
         </div>
 
         {/* Chart 4: DSA Questions Solved */}
-        <div className="p-5 rounded-3xl glass-card border border-slate-200 dark:border-white/10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-5 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between mb-4 font-mono">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                <Code2 className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                <Code2 className="w-3.5 h-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">DSA Solved Over Time</h4>
-                <span className="text-[11px] text-slate-400">Daily Volume</span>
+                <h4 className="text-xs font-bold text-white uppercase">DSA Problem Volume</h4>
+                <span className="text-[10px] text-zinc-500">Daily LeetCode Execution</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-purple-500">
+            <span className="text-xs font-mono font-bold text-purple-400">
               Total: {runningDsa} Problems
             </span>
           </div>
 
           {/* DSA Bars */}
-          <div className="h-40 flex items-end gap-1 sm:gap-2 pt-6 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="h-36 flex items-end gap-1 sm:gap-1.5 pt-6 pb-2 border-b border-white/[0.06]">
             {dsaData.map((d) => {
               const heightPercent = Math.min(100, Math.round((d.daily / maxDsaDaily) * 100));
               return (
                 <div key={d.date} className="flex-1 flex flex-col items-center h-full justify-end group relative">
                   <div
-                    className={`w-full rounded-t-md transition-all duration-300 ${
+                    className={`w-full rounded-t-[2px] transition-all duration-300 ${
                       d.daily > 0
-                        ? 'bg-purple-600 hover:bg-purple-500'
-                        : 'bg-slate-200 dark:bg-slate-800'
+                        ? 'bg-purple-500 hover:bg-purple-400 shadow-[0_0_4px_rgba(168,85,247,0.4)]'
+                        : 'bg-zinc-800/60'
                     }`}
                     style={{ height: `${Math.max(4, heightPercent)}%` }}
                   />
-                  <div className="absolute -top-7 hidden group-hover:flex px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
+                  <div className="absolute -top-7 hidden group-hover:flex px-2 py-0.5 rounded bg-zinc-900 border border-white/[0.1] text-white text-[10px] font-mono z-10 whitespace-nowrap shadow-md">
                     {d.label}: {d.daily} Qs
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-mono">
+          <div className="flex justify-between text-[10px] text-zinc-500 mt-2 font-mono">
             <span>{dsaData[0]?.label}</span>
             <span>{dsaData[Math.floor(dsaData.length / 2)]?.label}</span>
             <span>{dsaData[dsaData.length - 1]?.label}</span>
