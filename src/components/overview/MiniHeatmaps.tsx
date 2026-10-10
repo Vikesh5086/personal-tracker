@@ -81,17 +81,17 @@ export const MiniHeatmaps: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-3.5 font-mono">
       <div className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-zinc-400 bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] px-2 py-0.5 rounded">
             MATRIX
           </span>
-          <h3 className="text-sm font-mono font-bold tracking-tight text-white uppercase">
+          <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white uppercase">
             Core Habit Trails // Last 28 Days
           </h3>
         </div>
-        <span className="text-xs font-mono text-zinc-500">4-Week Trajectory</span>
+        <span className="text-xs text-slate-400 dark:text-zinc-500">4-Week Trajectory</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -106,22 +106,22 @@ export const MiniHeatmaps: React.FC = () => {
           return (
             <div
               key={grid.id}
-              className="p-4 rounded-xl bg-[#0b0f19] border border-white/[0.08] shadow-md hover:border-white/20 transition-all"
+              className="p-4 rounded-xl bg-white dark:bg-[#161a25] border border-slate-200 dark:border-white/[0.08] shadow-xs dark:shadow-md hover:border-slate-300 dark:hover:border-white/20 transition-all"
             >
               <div className="flex items-center justify-between mb-3 font-mono">
                 <div className="flex items-center gap-2">
-                  <div className="p-1 rounded bg-zinc-900 border border-white/[0.08]">
+                  <div className="p-1 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-white/[0.08]">
                     {grid.icon}
                   </div>
-                  <span className="text-xs font-bold text-zinc-200">
+                  <span className="text-xs font-bold text-slate-800 dark:text-zinc-200">
                     {grid.name}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-black text-white font-mono">
+                  <span className="text-xs font-black text-slate-900 dark:text-white font-mono">
                     {activeCount}/28d
                   </span>
-                  <span className="text-[10px] text-zinc-500 ml-1">({rate}%)</span>
+                  <span className="text-[10px] text-slate-400 dark:text-zinc-500 ml-1">({rate}%)</span>
                 </div>
               </div>
 
@@ -136,7 +136,7 @@ export const MiniHeatmaps: React.FC = () => {
                       className={`h-3.5 rounded-[3px] transition-all ${
                         isDone
                           ? grid.activeColor
-                          : 'bg-zinc-800/60 border border-white/[0.04]'
+                          : 'bg-slate-200 dark:bg-zinc-800/60 border border-slate-300 dark:border-white/[0.04]'
                       }`}
                       title={`${dateStr}: ${isDone ? 'Locked' : 'Missed'}`}
                     />

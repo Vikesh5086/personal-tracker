@@ -32,7 +32,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex discipline-bg text-slate-800 dark:text-slate-100 selection:bg-zinc-700 selection:text-white transition-colors duration-200">
+    <div className="min-h-screen flex discipline-bg text-slate-900 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-200">
       {/* Desktop Sticky Sidebar */}
       <Sidebar />
 

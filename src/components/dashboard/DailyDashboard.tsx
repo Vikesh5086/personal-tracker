@@ -69,28 +69,28 @@ export const DailyDashboard: React.FC = () => {
       <QuoteHeroBanner />
 
       {/* Daily Progress Discipline Console */}
-      <div className={`p-5 sm:p-6 rounded-2xl bg-[#0b0f19] border transition-all duration-300 shadow-xl ${
+      <div className={`p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#161a25] border transition-all duration-300 shadow-xs dark:shadow-xl ${
         isPerfect
-          ? 'border-amber-400/40 shadow-amber-500/5 ring-1 ring-amber-400/20'
-          : 'border-white/[0.08]'
+          ? 'border-amber-400/50 shadow-amber-500/10 ring-1 ring-amber-400/20'
+          : 'border-slate-200 dark:border-white/[0.08]'
       }`}>
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2">
               <span className={`font-mono text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-md border ${
                 isPerfect
-                  ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
-                  : 'bg-white/[0.05] text-zinc-300 border-white/[0.08]'
+                  ? 'bg-amber-400/15 text-amber-600 dark:text-amber-300 border-amber-400/30'
+                  : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-white/[0.05] dark:text-zinc-300 dark:border-white/[0.08]'
               }`}>
                 PROTOCOL // DAY {String(currentDayNumber).padStart(3, '0')}
               </span>
-              <span className="text-xs text-zinc-500 font-mono">
+              <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono">
                 {currentDate}
               </span>
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-mono">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight font-mono">
                 {completion}% COMPLETED
               </h2>
               {isPerfect && (
@@ -101,7 +101,7 @@ export const DailyDashboard: React.FC = () => {
               )}
             </div>
 
-            <p className="text-xs text-zinc-400 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-zinc-400 max-w-xl">
               {completion === 100
                 ? 'All 10 protocols locked in for today. Flawless discipline streak maintained. +150 Bonus XP awarded.'
                 : completion >= 60
@@ -111,44 +111,44 @@ export const DailyDashboard: React.FC = () => {
 
             {/* Quick Action Pills */}
             <div className="flex items-center gap-2 pt-1 flex-wrap">
-              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider">
+              <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                 Quick Log:
               </span>
               <button
                 type="button"
                 onClick={handleQuickAddDsa}
-                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-zinc-900 border border-white/[0.08] text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-1.5 transition-all active:scale-95"
+                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-slate-100 hover:bg-slate-200 dark:bg-[#1e2330] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs"
               >
-                <Code2 className="w-3.5 h-3.5 text-purple-400" />
+                <Code2 className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
                 <span>+1 DSA</span>
               </button>
               <button
                 type="button"
                 onClick={handleQuickAddWater}
-                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-zinc-900 border border-white/[0.08] text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-1.5 transition-all active:scale-95"
+                className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-slate-100 hover:bg-slate-200 dark:bg-[#1e2330] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs"
               >
-                <Droplet className="w-3.5 h-3.5 text-cyan-400" />
+                <Droplet className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                 <span>+250ml Water</span>
               </button>
             </div>
           </div>
 
-          {/* Telemetry Telemetry Block */}
-          <div className="flex items-center gap-4 self-start lg:self-auto shrink-0 bg-zinc-900/60 border border-white/[0.06] p-4 rounded-xl font-mono">
+          {/* Telemetry Block */}
+          <div className="flex items-center gap-4 self-start lg:self-auto shrink-0 bg-slate-50 dark:bg-[#1e2330] border border-slate-200 dark:border-white/[0.08] p-4 rounded-xl font-mono shadow-2xs">
             <div>
-              <span className="text-[10px] uppercase font-bold text-zinc-500 block">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 block">
                 Discipline Lock
               </span>
-              <span className="text-2xl font-black text-white">
-                {Math.round((completion / 100) * 10)} <span className="text-xs text-zinc-500 font-normal">/ 10</span>
+              <span className="text-2xl font-black text-slate-900 dark:text-white">
+                {Math.round((completion / 100) * 10)} <span className="text-xs text-slate-500 dark:text-zinc-400 font-normal">/ 10</span>
               </span>
             </div>
-            <div className="h-8 w-[1px] bg-white/[0.08]" />
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-white/[0.08]" />
             <div>
-              <span className="text-[10px] uppercase font-bold text-zinc-500 block">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 block">
                 Today XP
               </span>
-              <span className="text-2xl font-black text-amber-400">
+              <span className="text-2xl font-black text-amber-500 dark:text-amber-400">
                 +{currentLog.xpEarned}
               </span>
             </div>
@@ -164,12 +164,12 @@ export const DailyDashboard: React.FC = () => {
               return (
                 <div
                   key={`seg-${index}`}
-                  className={`h-2 sm:h-2.5 rounded-sm transition-all duration-300 ${
+                  className={`h-2.5 sm:h-3 rounded-sm transition-all duration-300 ${
                     isFilled
                       ? isPerfect
                         ? 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]'
                         : 'shadow-[0_0_6px_rgba(var(--primary-accent-rgb),0.5)]'
-                      : 'bg-zinc-800/80 border border-white/[0.04]'
+                      : 'bg-slate-200 dark:bg-[#222838] border border-slate-300/60 dark:border-white/[0.04]'
                   }`}
                   style={{
                     backgroundColor: isFilled && !isPerfect ? 'var(--primary-accent)' : undefined,
@@ -181,7 +181,7 @@ export const DailyDashboard: React.FC = () => {
           </div>
 
           {/* Telemetry info bar */}
-          <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono pt-1">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-zinc-400 font-mono pt-1">
             <span>[← / →] Shift Day • [T] Jump to Today</span>
             <span>10 Core Protocols Daily</span>
           </div>
@@ -222,8 +222,8 @@ export const DailyDashboard: React.FC = () => {
       </div>
 
       {/* Quick Footer Links */}
-      <div className="p-4 rounded-xl bg-zinc-900/60 border border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-        <span className="text-zinc-400">
+      <div className="p-4 rounded-xl bg-white dark:bg-[#161a25] border border-slate-200 dark:border-white/[0.08] shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <span className="text-slate-600 dark:text-zinc-400">
           Looking for Extra Routines (Screen Time, Steps, Reading, Interview Prep)?
         </span>
         <button
@@ -231,7 +231,7 @@ export const DailyDashboard: React.FC = () => {
             sounds.playTap();
             setActiveTab('extras');
           }}
-          className="font-bold text-white hover:text-emerald-400 hover:underline flex items-center gap-1.5 transition-colors"
+          className="font-bold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline flex items-center gap-1.5 transition-colors"
         >
           <span>Open Extra Trackers</span>
           <ArrowRight className="w-3.5 h-3.5" />

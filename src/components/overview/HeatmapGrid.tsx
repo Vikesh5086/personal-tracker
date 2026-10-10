@@ -20,7 +20,7 @@ interface DayCell {
 }
 
 export const HeatmapGrid: React.FC = () => {
-  const { profile, allLogs, setCurrentDate, setActiveTab, todayDate, gamification } = useApp();
+  const { profile, allLogs, setCurrentDate, setActiveTab, todayDate, gamification, themeMode } = useApp();
   const [mode, setMode] = useState<HeatmapMode>('daily');
   const [hoveredDay, setHoveredDay] = useState<DayCell | null>(null);
 
@@ -251,7 +251,7 @@ export const HeatmapGrid: React.FC = () => {
     if (cell.isPerfect) {
       return {
         bg: 'var(--primary-accent)',
-        border: '1px solid #ffffff',
+        border: themeMode === 'light' ? '1px solid var(--primary-accent)' : '1px solid #ffffff',
         glow: '0 0 10px rgba(var(--primary-accent-rgb), 0.75), inset 0 0 4px rgba(255, 255, 255, 0.5)',
       };
     }
@@ -273,23 +273,35 @@ export const HeatmapGrid: React.FC = () => {
     if (completion > 0) {
       return {
         bg: 'rgba(var(--primary-accent-rgb), 0.28)',
-        border: '1px solid rgba(var(--primary-accent-rgb), 0.35)',
+        border: themeMode === 'light'
+          ? '1px solid rgba(var(--primary-accent-rgb), 0.45)'
+          : '1px solid rgba(var(--primary-accent-rgb), 0.35)',
       };
     }
 
     // 0% completion
     if (isPast) {
-      return {
-        bg: 'rgba(255, 255, 255, 0.06)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-      };
+      return themeMode === 'light'
+        ? {
+            bg: '#e2e8f0', // soft slate-200 like GitHub light
+            border: '1px solid #cbd5e1',
+          }
+        : {
+            bg: '#1c212e',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          };
     }
 
     // Future day
-    return {
-      bg: 'rgba(255, 255, 255, 0.02)',
-      border: '1px dashed rgba(255, 255, 255, 0.05)',
-    };
+    return themeMode === 'light'
+      ? {
+          bg: '#f8fafc',
+          border: '1px dashed #cbd5e1',
+        }
+      : {
+          bg: 'rgba(255, 255, 255, 0.02)',
+          border: '1px dashed rgba(255, 255, 255, 0.05)',
+        };
   };
 
   const handleCellSelect = (dateStr: string) => {
@@ -300,38 +312,38 @@ export const HeatmapGrid: React.FC = () => {
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-2xl p-5 sm:p-7 relative overflow-hidden text-slate-100">
+    <div className="rounded-2xl bg-white dark:bg-[#161a25] border border-slate-200 dark:border-white/[0.08] shadow-xs dark:shadow-2xl p-5 sm:p-7 relative overflow-hidden text-slate-900 dark:text-slate-100">
       {/* Subtle background hairline glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,rgba(var(--primary-accent-rgb),0.06),transparent_60%)] pointer-events-none" />
 
       {/* Centerpiece Header with Mission Telemetry & Mode Toggles */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.06] mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-white/[0.06] mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2.5 py-0.5 rounded-md">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-zinc-400 bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] px-2.5 py-0.5 rounded-md">
               PROTOCOL // STREAK ENGINE
             </span>
-            <span className="font-mono text-[11px] text-zinc-500">
+            <span className="font-mono text-[11px] text-slate-400 dark:text-zinc-500">
               100-Day GitHub Matrix
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
             <span>Discipline Contribution Heatmap</span>
           </h2>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
             Every square records daily habit execution. Brighter squares signify deep focus; saturated squares mark 100% perfect days.
           </p>
         </div>
 
         {/* View Mode Toggle Tabs (Daily / Weekly / Cumulative) */}
-        <div className="inline-flex items-center p-1 rounded-xl bg-zinc-900/90 border border-white/[0.08] self-start sm:self-auto shrink-0 shadow-inner">
+        <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-900/90 border border-slate-200 dark:border-white/[0.08] self-start sm:self-auto shrink-0 shadow-inner">
           <button
             type="button"
             onClick={() => setMode('daily')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
               mode === 'daily'
-                ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-white dark:bg-zinc-100 text-slate-900 dark:text-zinc-950 shadow-xs'
+                : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
             }`}
           >
             Daily
@@ -341,8 +353,8 @@ export const HeatmapGrid: React.FC = () => {
             onClick={() => setMode('weekly')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
               mode === 'weekly'
-                ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-white dark:bg-zinc-100 text-slate-900 dark:text-zinc-950 shadow-xs'
+                : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
             }`}
           >
             Weekly
@@ -352,8 +364,8 @@ export const HeatmapGrid: React.FC = () => {
             onClick={() => setMode('cumulative')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
               mode === 'cumulative'
-                ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-white dark:bg-zinc-100 text-slate-900 dark:text-zinc-950 shadow-xs'
+                : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
             }`}
           >
             Cumulative
@@ -415,7 +427,7 @@ export const HeatmapGrid: React.FC = () => {
                             onMouseEnter={() => setHoveredDay(cell)}
                             className={`w-[14px] h-[14px] sm:w-[18px] sm:h-[18px] rounded-[3px] transition-all relative group cursor-pointer hover:scale-125 hover:z-20 ${
                               cell.isToday
-                                ? 'ring-2 ring-white ring-offset-1 ring-offset-[#0b0f19]'
+                                ? 'ring-2 ring-slate-900 dark:ring-white ring-offset-1 ring-offset-white dark:ring-offset-[#161a25]'
                                 : ''
                             }`}
                             style={{
@@ -449,10 +461,10 @@ export const HeatmapGrid: React.FC = () => {
               return (
                 <div
                   key={`wk-card-${w.weekNum}`}
-                  className="p-3.5 rounded-xl bg-zinc-900/60 border border-white/[0.08] hover:border-white/20 transition-all flex flex-col justify-between gap-3 group"
+                  className="p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between gap-3 group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-zinc-300">
+                    <span className="font-mono text-xs font-bold text-slate-700 dark:text-zinc-300">
                       WEEK {String(w.weekNum).padStart(2, '0')}
                     </span>
                     <div
@@ -467,15 +479,15 @@ export const HeatmapGrid: React.FC = () => {
                   </div>
 
                   <div>
-                    <div className="text-xl font-black font-mono text-white">
+                    <div className="text-xl font-black font-mono text-slate-900 dark:text-white">
                       {w.avgCompletion}%
                     </div>
-                    <span className="text-[10px] text-zinc-400 font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-mono">
                       {w.daysLogged}/7 Days Logged
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-zinc-500">
+                  <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-slate-400 dark:text-zinc-500">
                     <span>{w.perfectDaysCount} Perfect Days</span>
                     <span>+{w.totalXp} XP</span>
                   </div>
@@ -489,7 +501,7 @@ export const HeatmapGrid: React.FC = () => {
       {/* MODE 3: CUMULATIVE INTENSITY BUILDUP */}
       {mode === 'cumulative' && (
         <div className="space-y-4">
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-slate-500 dark:text-zinc-400">
             Cumulative volume visualization: as you progress day-by-day across the 100-day timeline, intensity expands as your aggregate volume of completed reps and discipline compounds.
           </p>
           <div className="overflow-x-auto pb-3 pt-1 scrollbar-thin">
@@ -516,7 +528,7 @@ export const HeatmapGrid: React.FC = () => {
                           onClick={() => handleCellSelect(cell.date)}
                           onMouseEnter={() => setHoveredDay(cell)}
                           className={`w-[14px] h-[14px] sm:w-[18px] sm:h-[18px] rounded-[3px] transition-all relative group cursor-pointer hover:scale-125 hover:z-20 ${
-                            cell.isToday ? 'ring-2 ring-white ring-offset-1 ring-offset-[#0b0f19]' : ''
+                            cell.isToday ? 'ring-2 ring-slate-900 dark:ring-white ring-offset-1 ring-offset-white dark:ring-offset-[#161a25]' : ''
                           }`}
                           style={{
                             backgroundColor: styleObj.bg,
@@ -537,12 +549,12 @@ export const HeatmapGrid: React.FC = () => {
       )}
 
       {/* INTERACTIVE INSPECT DOCK & LEGEND */}
-      <div className="mt-6 pt-5 border-t border-white/[0.06] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/[0.06] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         {/* Dynamic Tooltip / Inspect Details */}
         <div className="min-h-[44px] flex-1">
           {hoveredDay ? (
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
-              <span className="font-mono font-bold text-white bg-white/[0.08] px-2.5 py-1 rounded-md border border-white/[0.1]">
+              <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-white/[0.08] px-2.5 py-1 rounded-md border border-slate-200 dark:border-white/[0.1]">
                 DAY {String(hoveredDay.dayNum).padStart(3, '0')} // {hoveredDay.date}
               </span>
 
@@ -556,29 +568,29 @@ export const HeatmapGrid: React.FC = () => {
                 </span>
               )}
 
-              <span className="font-mono text-zinc-400 text-[11px]">
+              <span className="font-mono text-slate-500 dark:text-zinc-400 text-[11px]">
                 +{hoveredDay.xp} XP
               </span>
 
               {hoveredDay.completedHabitsList.length > 0 ? (
-                <div className="flex items-center gap-1.5 flex-wrap text-[11px] text-zinc-300">
-                  <span className="text-zinc-500 font-mono">• Logged:</span>
+                <div className="flex items-center gap-1.5 flex-wrap text-[11px] text-slate-700 dark:text-zinc-300">
+                  <span className="text-slate-400 dark:text-zinc-500 font-mono">• Logged:</span>
                   {hoveredDay.completedHabitsList.slice(0, 4).map((h, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-medium text-[10px]"
+                      className="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-transparent font-medium text-[10px]"
                     >
                       {h}
                     </span>
                   ))}
                   {hoveredDay.completedHabitsList.length > 4 && (
-                    <span className="text-zinc-500 text-[10px]">
+                    <span className="text-slate-400 dark:text-zinc-500 text-[10px]">
                       +{hoveredDay.completedHabitsList.length - 4} more
                     </span>
                   )}
                 </div>
               ) : (
-                <span className="text-zinc-500 italic text-[11px]">
+                <span className="text-slate-400 dark:text-zinc-500 italic text-[11px]">
                   {hoveredDay.isPast ? 'No habits logged for this day.' : 'Upcoming challenge day.'}
                 </span>
               )}
@@ -586,27 +598,27 @@ export const HeatmapGrid: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleCellSelect(hoveredDay.date)}
-                className="ml-auto text-[11px] font-mono text-zinc-300 hover:text-white flex items-center gap-1 underline underline-offset-4"
+                className="ml-auto text-[11px] font-mono text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 underline underline-offset-4"
               >
                 <span>Edit Day {hoveredDay.dayNum}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono">
-              <Clock className="w-3.5 h-3.5 text-zinc-400" />
+            <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-zinc-500 font-mono">
+              <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-400" />
               <span>Hover or tap any square to inspect details • Click to jump directly to that day's log.</span>
             </div>
           )}
         </div>
 
         {/* GitHub Legend */}
-        <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400 shrink-0 select-none">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 dark:text-zinc-400 shrink-0 select-none">
           <span>Less</span>
           {/* Level 0 */}
           <div
-            className="w-3 h-3 rounded-sm border border-white/[0.08]"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.06)' }}
+            className="w-3 h-3 rounded-sm border border-slate-300 dark:border-white/[0.08]"
+            style={{ backgroundColor: themeMode === 'light' ? '#e2e8f0' : 'rgba(255, 255, 255, 0.06)' }}
             title="0% Complete"
           />
           {/* Level 1 */}

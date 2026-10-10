@@ -151,7 +151,7 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setMobileMenuOpen(true);
             }}
-            className="lg:hidden p-2.5 rounded-xl bg-zinc-900 border border-white/[0.1] text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors shrink-0"
+            className="lg:hidden p-2.5 rounded-xl bg-white dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.09] text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#202533] transition-colors shadow-xs shrink-0"
             title="Open 100-Day Menu"
           >
             <Menu className="w-5 h-5" />
@@ -165,7 +165,7 @@ export const AppHeader: React.FC = () => {
             className="relative cursor-pointer group shrink-0 w-12 h-12"
             title="Account Settings"
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-900 border border-white/[0.12] flex items-center justify-center shadow-md group-hover:border-white/30 transition-all shrink-0">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.12] flex items-center justify-center shadow-xs group-hover:border-slate-400 dark:group-hover:border-white/30 transition-all shrink-0">
               {profile?.profilePhoto ? (
                 <img
                   src={profile.profilePhoto}
@@ -173,22 +173,22 @@ export const AppHeader: React.FC = () => {
                   className="w-12 h-12 object-cover group-hover:scale-105 transition-transform block"
                 />
               ) : (
-                <User className="w-5 h-5 text-zinc-400" />
+                <User className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
               )}
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#090d16] shadow-sm" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0f1218] shadow-xs" />
           </div>
 
           <div>
-            <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               <span>{greeting}</span>
             </h1>
-            <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-400 font-mono">
-              <span className="font-bold text-white bg-white/[0.08] px-2 py-0.5 rounded border border-white/[0.08]">
+            <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500 dark:text-zinc-400 font-mono">
+              <span className="font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-white/[0.08] px-2 py-0.5 rounded border border-slate-200 dark:border-white/[0.08]">
                 DAY {String(currentDayNumber).padStart(3, '0')} // 100
               </span>
               <span>•</span>
-              <span className="truncate max-w-[200px] sm:max-w-xs text-zinc-300 font-normal">{profile?.goal || 'Personal Challenge'}</span>
+              <span className="truncate max-w-[200px] sm:max-w-xs text-slate-600 dark:text-zinc-300 font-normal">{profile?.goal || 'Personal Challenge'}</span>
             </div>
           </div>
         </div>
@@ -202,7 +202,7 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setActiveTab('overview');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-xs font-mono font-bold cursor-pointer transition-all hover:border-white/20 text-white"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/30 text-xs font-mono font-bold cursor-pointer transition-all hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 shadow-xs"
             title={`Current streak: ${gamification.currentStreak} days`}
           >
             <Flame className="w-4 h-4 text-orange-500" />
@@ -215,15 +215,15 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setActiveTab('gamification');
             }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-xs font-mono font-bold text-zinc-200 cursor-pointer hover:border-white/20 transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.09] text-xs font-mono font-bold text-slate-800 dark:text-zinc-200 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition-all shadow-xs"
             title={`${gamification.totalXp} Total XP (${gamification.xpToNextLevel} XP to Level ${gamification.level + 1})`}
           >
-            <div className="flex items-center gap-1 text-amber-400">
+            <div className="flex items-center gap-1 text-amber-500 dark:text-amber-400">
               <Award className="w-3.5 h-3.5" />
               <span>Lvl {gamification.level}</span>
             </div>
-            <div className="h-3 w-[1px] bg-white/[0.1]" />
-            <span className="font-extrabold text-white">
+            <div className="h-3 w-[1px] bg-slate-200 dark:bg-white/[0.1]" />
+            <span className="font-extrabold text-slate-900 dark:text-white">
               {gamification.totalXp} XP
             </span>
           </div>
@@ -232,10 +232,10 @@ export const AppHeader: React.FC = () => {
           <button
             type="button"
             onClick={toggleSound}
-            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-xl bg-white dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.09] text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#202533] transition-colors shadow-xs"
             title={soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-zinc-500" />}
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-400 dark:text-zinc-500" />}
           </button>
 
           {/* Dark / Light Toggle */}
@@ -245,10 +245,10 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               toggleTheme();
             }}
-            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-xl bg-white dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.09] text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#202533] transition-colors shadow-xs"
             title={`Switch to ${themeMode === 'dark' ? 'Light' : 'Dark'} Mode`}
           >
-            {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {themeMode === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
           </button>
 
           {/* Settings Button */}
@@ -258,7 +258,7 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setActiveTab('settings');
             }}
-            className="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-xl bg-white dark:bg-[#181c26] border border-slate-200 dark:border-white/[0.09] text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#202533] transition-colors shadow-xs"
             title="Settings"
           >
             <SettingsIcon className="w-4 h-4" />
@@ -274,7 +274,7 @@ export const AppHeader: React.FC = () => {
                   logoutAction();
                 }
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/90 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition-all text-xs font-mono font-bold"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all text-xs font-mono font-bold shadow-xs"
               title={`Connected as ${firebaseUser.email} (Click to Log Out / Switch Account)`}
             >
               <LogOut className="w-3.5 h-3.5 shrink-0" />
@@ -288,7 +288,7 @@ export const AppHeader: React.FC = () => {
                 sounds.playTap();
                 loginWithGoogleAction();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 text-zinc-950 hover:bg-white transition-all text-xs font-mono font-bold shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-zinc-950 hover:bg-slate-800 dark:hover:bg-zinc-100 transition-all text-xs font-mono font-bold shadow-xs"
               title="Sign in with Google to sync across devices"
             >
               <LogIn className="w-3.5 h-3.5 shrink-0" />
@@ -299,13 +299,13 @@ export const AppHeader: React.FC = () => {
       </div>
 
       {/* Date Navigation & Quote Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#161a24] border border-slate-200 dark:border-white/[0.08] shadow-xs dark:shadow-md">
         {/* Date Selector Navigation */}
         <div className="flex items-center gap-1.5 self-center sm:self-auto">
           <button
             type="button"
             onClick={() => handleShiftDate(-1)}
-            className="p-1.5 rounded-xl bg-zinc-900 border border-white/[0.06] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors font-mono"
+            className="p-1.5 rounded-xl bg-slate-100 dark:bg-[#1e2330] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#252c3d] transition-colors font-mono"
             title="Previous Day (or Left Arrow key)"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -319,14 +319,14 @@ export const AppHeader: React.FC = () => {
                 sounds.playTap();
                 setCurrentDate(e.target.value);
               }}
-              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/[0.1] text-white focus:outline-none focus:ring-1 focus:ring-white/30 cursor-pointer"
+              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-[#11141c] border border-slate-200 dark:border-white/[0.1] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-white/30 cursor-pointer"
             />
           </div>
 
           <button
             type="button"
             onClick={() => handleShiftDate(1)}
-            className="p-1.5 rounded-xl bg-zinc-900 border border-white/[0.06] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors font-mono"
+            className="p-1.5 rounded-xl bg-slate-100 dark:bg-[#1e2330] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#252c3d] transition-colors font-mono"
             title="Next Day (or Right Arrow key)"
           >
             <ChevronRight className="w-4 h-4" />
@@ -339,22 +339,22 @@ export const AppHeader: React.FC = () => {
                 sounds.playTap();
                 setCurrentDate(todayDate);
               }}
-              className="ml-1 px-3 py-1 rounded-xl text-xs font-mono font-black bg-zinc-100 text-zinc-950 hover:bg-white shadow-sm transition-all"
+              className="ml-1 px-3 py-1 rounded-xl text-xs font-mono font-black bg-slate-900 dark:bg-white text-white dark:text-zinc-950 hover:bg-slate-800 dark:hover:bg-zinc-200 shadow-xs transition-all"
               title="Jump to Today (press 'T')"
             >
               TODAY
             </button>
           )}
 
-          <span className="text-xs font-mono text-zinc-500 ml-1">
+          <span className="text-xs font-mono text-slate-500 dark:text-zinc-400 ml-1">
             (Day {currentDayNumber})
           </span>
         </div>
 
         {/* Motivational Quote with Refresh */}
-        <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-zinc-400 italic border-t sm:border-t-0 pt-2 sm:pt-0 border-white/[0.06]">
+        <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-slate-500 dark:text-zinc-400 italic border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-white/[0.06]">
           <span className="truncate max-w-md font-sans">
-            "{quote.text}" — <span className="font-semibold not-italic text-zinc-300">{quote.author}</span>
+            "{quote.text}" — <span className="font-semibold not-italic text-slate-700 dark:text-zinc-300">{quote.author}</span>
           </span>
           <button
             type="button"
@@ -362,7 +362,7 @@ export const AppHeader: React.FC = () => {
               sounds.playTap();
               setQuote(getRandomQuote());
             }}
-            className="p-1 text-zinc-500 hover:text-white shrink-0 hover:rotate-180 transition-transform duration-300"
+            className="p-1 text-slate-400 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-white shrink-0 hover:rotate-180 transition-transform duration-300"
             title="New quote"
           >
             <RefreshCw className="w-3.5 h-3.5" />

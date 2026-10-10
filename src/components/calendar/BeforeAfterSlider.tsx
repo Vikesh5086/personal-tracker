@@ -23,31 +23,31 @@ export const BeforeAfterSlider: React.FC = () => {
   const hasBothPhotos = Boolean(firstPhotoLog && latestPhotoLog);
 
   return (
-    <div className="rounded-2xl bg-[#0b0f19] border border-white/[0.08] shadow-xl p-5 sm:p-6 space-y-4 text-slate-100">
+    <div className="rounded-2xl bg-white dark:bg-[#161a25] border border-slate-200 dark:border-white/[0.08] shadow-xs dark:shadow-xl p-5 sm:p-6 space-y-4 text-slate-900 dark:text-slate-100 font-mono">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-zinc-400 bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] px-2 py-0.5 rounded">
               VISUAL CHRONICLE
             </span>
           </div>
-          <h3 className="text-lg sm:text-xl font-black tracking-tight text-white font-mono uppercase">
+          <h3 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white uppercase">
             Transformation Photo Progression
           </h3>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-slate-500 dark:text-zinc-400 font-sans">
             Compare Day 1 against your latest milestone photo. Direct physical proof of your discipline.
           </p>
         </div>
 
         {hasBothPhotos && (
-          <div className="inline-flex items-center p-1 rounded-xl bg-zinc-900 border border-white/[0.08] font-mono text-xs">
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-white/[0.08] text-xs">
             <button
               type="button"
               onClick={() => setViewMode('slider')}
               className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
                 viewMode === 'slider'
-                  ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
+                  ? 'bg-white dark:bg-zinc-100 text-slate-900 dark:text-zinc-950 shadow-xs'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Interactive Slider
@@ -57,8 +57,8 @@ export const BeforeAfterSlider: React.FC = () => {
               onClick={() => setViewMode('side-by-side')}
               className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
                 viewMode === 'side-by-side'
-                  ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
+                  ? 'bg-white dark:bg-zinc-100 text-slate-900 dark:text-zinc-950 shadow-xs'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Side by Side
@@ -68,22 +68,22 @@ export const BeforeAfterSlider: React.FC = () => {
       </div>
 
       {!hasBothPhotos ? (
-        <div className="p-8 rounded-xl bg-zinc-900/60 border border-white/[0.06] text-center space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-zinc-400 mx-auto">
+        <div className="p-8 rounded-xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-white/[0.06] text-center space-y-3">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-white/[0.08] flex items-center justify-center text-slate-400 dark:text-zinc-400 mx-auto">
             <ImageIcon className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white font-mono">
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">
               Transformation photos unlocking...
             </h4>
-            <p className="text-xs text-zinc-400 max-w-md mx-auto mt-1">
+            <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-md mx-auto mt-1 font-sans">
               Upload your Day 1 baseline photo and subsequent milestone progress photos in the Daily Log to unlock the interactive comparison slider!
             </p>
           </div>
           <button
             type="button"
             onClick={() => setActiveTab('dashboard')}
-            className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-zinc-100 text-zinc-950 hover:bg-white shadow-sm transition-all"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 hover:bg-slate-800 dark:hover:bg-white shadow-xs transition-all"
           >
             Log Today's Photo
           </button>
