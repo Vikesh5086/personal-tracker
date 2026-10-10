@@ -9,6 +9,7 @@ import { MilestoneModal } from './components/common/MilestoneModal';
 
 // Views
 import { DailyDashboard } from './components/dashboard/DailyDashboard';
+import { FoodView } from './components/food/FoodView';
 import { CombinedOverview } from './components/overview/CombinedOverview';
 import { CalendarView } from './components/calendar/CalendarView';
 import { ProductivitySuite } from './components/productivity/ProductivitySuite';
@@ -42,6 +43,7 @@ const AppContent: React.FC = () => {
 
           {/* Active Tab View */}
           {activeTab === 'dashboard' && <DailyDashboard />}
+          {activeTab === 'food' && <FoodView />}
           {activeTab === 'overview' && <CombinedOverview />}
           {activeTab === 'calendar' && <CalendarView />}
           {activeTab === 'productivity' && <ProductivitySuite />}

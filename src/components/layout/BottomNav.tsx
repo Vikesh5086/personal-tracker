@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   CheckSquare,
+  Utensils,
   BarChart3,
   Calendar,
   Clock,
@@ -19,18 +20,19 @@ export const BottomNav: React.FC = () => {
 
   const primaryItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
     { id: 'dashboard', label: 'Log', icon: <CheckSquare className="w-4 h-4" /> },
+    { id: 'food', label: 'Food', icon: <Utensils className="w-4 h-4" /> },
     { id: 'overview', label: 'Matrix', icon: <BarChart3 className="w-4 h-4" /> },
     { id: 'calendar', label: 'Archive', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'productivity', label: 'Focus', icon: <Clock className="w-4 h-4" /> },
   ];
 
   const secondaryItems: { id: NavTab; label: string; icon: React.ReactNode; desc: string }[] = [
+    { id: 'productivity', label: 'Deep Work Focus', icon: <Clock className="w-4 h-4 text-cyan-400" />, desc: 'Pomodoro timer and time blocks' },
     { id: 'extras', label: 'Extra Routines', icon: <Sliders className="w-4 h-4 text-teal-400" />, desc: 'Screen time, steps, reading, mock prep' },
     { id: 'gamification', label: 'Ranks & Badges', icon: <Award className="w-4 h-4 text-amber-400" />, desc: 'Mastery milestones and discipline XP' },
     { id: 'settings', label: 'Settings & Cloud', icon: <Settings className="w-4 h-4 text-indigo-400" />, desc: 'Profile, theme, sync and data export' },
   ];
 
-  const isMoreActive = ['extras', 'gamification', 'settings'].includes(activeTab);
+  const isMoreActive = ['productivity', 'extras', 'gamification', 'settings'].includes(activeTab);
 
   const handleSelectTab = (tab: NavTab) => {
     sounds.playTap();

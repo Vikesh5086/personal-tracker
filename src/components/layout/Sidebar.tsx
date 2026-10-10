@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   CheckSquare,
+  Utensils,
   BarChart3,
   Calendar,
   Clock,
@@ -11,7 +12,7 @@ import {
   Terminal,
   LogOut,
   LogIn,
-  Shield,
+  X,
 } from 'lucide-react';
 import { useApp, NavTab } from '../../context/AppContext';
 import { sounds } from '../../services/sound';
@@ -26,46 +27,62 @@ export const Sidebar: React.FC = () => {
     logoutAction,
     loginWithGoogleAction,
     isCloudSyncing,
+    mobileMenuOpen,
+    setMobileMenuOpen,
   } = useApp();
 
   const navItems: { id: NavTab; label: string; index: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'dashboard', label: 'Daily Log', index: '01', icon: <CheckSquare className="w-4 h-4" /> },
-    { id: 'overview', label: 'Chronicle & Heatmap', index: '02', icon: <BarChart3 className="w-4 h-4" /> },
-    { id: 'calendar', label: 'Archive & Photos', index: '03', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'productivity', label: 'Deep Work Suite', index: '04', icon: <Clock className="w-4 h-4" /> },
-    { id: 'extras', label: 'Extra Routines', index: '05', icon: <Sliders className="w-4 h-4" /> },
+    { id: 'food', label: 'Food & Nutrition', index: '02', icon: <Utensils className="w-4 h-4" /> },
+    { id: 'overview', label: 'Chronicle & Heatmap', index: '03', icon: <BarChart3 className="w-4 h-4" /> },
+    { id: 'calendar', label: 'Archive & Photos', index: '04', icon: <Calendar className="w-4 h-4" /> },
+    { id: 'productivity', label: 'Deep Work Suite', index: '05', icon: <Clock className="w-4 h-4" /> },
+    { id: 'extras', label: 'Extra Routines', index: '06', icon: <Sliders className="w-4 h-4" /> },
     {
       id: 'gamification',
       label: 'Ranks & Badges',
-      index: '06',
+      index: '07',
       icon: <Award className="w-4 h-4" />,
       badge: `Lvl ${gamification.level}`,
     },
-    { id: 'settings', label: 'Settings & Cloud', index: '07', icon: <Settings className="w-4 h-4" /> },
+    { id: 'settings', label: 'Settings & Cloud', index: '08', icon: <Settings className="w-4 h-4" /> },
   ];
 
   const handleNavClick = (tab: NavTab) => {
     sounds.playTap();
     setActiveTab(tab);
+    setMobileMenuOpen(false);
   };
 
   const progressPercent = Math.min(100, Math.round((currentDayNumber / 100) * 100));
 
-  return (
-    <aside className="hidden lg:flex flex-col w-64 bg-[#090d16] border-r border-white/[0.07] min-h-screen p-4 shrink-0 sticky top-0 h-screen select-none text-slate-100 z-20">
+  const renderNavContent = () => (
+    <>
       {/* Brand Terminal Header */}
-      <div className="flex items-center gap-3 pb-5 pt-1 border-b border-white/[0.06]">
-        <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-white/[0.1] flex items-center justify-center text-white shadow-sm shrink-0">
-          <Terminal className="w-4 h-4 text-zinc-300" />
+      <div className="flex items-center justify-between pb-5 pt-1 border-b border-white/[0.06]">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-white/[0.1] flex items-center justify-center text-white shadow-sm shrink-0">
+            <Terminal className="w-4 h-4 text-zinc-300" />
+          </div>
+          <div>
+            <h2 className="text-sm font-black tracking-wider uppercase font-mono text-white flex items-center gap-1.5">
+              <span>100-DAY PROTOCOL</span>
+            </h2>
+            <p className="text-[10px] font-mono font-medium text-zinc-500">
+              Personal Mastery Log
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm font-black tracking-wider uppercase font-mono text-white flex items-center gap-1.5">
-            <span>100-DAY PROTOCOL</span>
-          </h2>
-          <p className="text-[10px] font-mono font-medium text-zinc-500">
-            Personal Mastery Log
-          </p>
-        </div>
+
+        {mobileMenuOpen && (
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg text-zinc-400 hover:text-white bg-zinc-800"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Mission Telemetry Rail */}
@@ -97,7 +114,7 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Navigation List */}
-      <nav className="space-y-1 flex-1 py-1">
+      <nav className="space-y-1 flex-1 py-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -199,6 +216,28 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sticky Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-[#090d16] border-r border-white/[0.07] min-h-screen p-4 shrink-0 sticky top-0 h-screen select-none text-slate-100 z-20">
+        {renderNavContent()}
+      </aside>
+
+      {/* Mobile Slide-Over Hamburger Panel Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="relative flex flex-col w-72 max-w-[85vw] bg-[#090d16] border-r border-white/[0.1] min-h-screen p-4 shadow-2xl z-10 animate-in slide-in-from-left duration-200 select-none text-slate-100">
+            {renderNavContent()}
+          </div>
+        </div>
+      )}
+    </>
   );
 };

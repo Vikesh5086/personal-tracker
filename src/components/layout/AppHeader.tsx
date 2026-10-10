@@ -14,6 +14,7 @@ import {
   Sparkles,
   LogOut,
   LogIn,
+  Menu,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getRandomQuote } from '../../services/quotes';
@@ -31,6 +32,7 @@ export const AppHeader: React.FC = () => {
     themeMode,
     toggleTheme,
     setActiveTab,
+    setMobileMenuOpen,
     refreshAllLogs,
     fireConfetti,
     firebaseUser,
@@ -141,7 +143,20 @@ export const AppHeader: React.FC = () => {
       {/* Top Banner Row */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* User Greeting & Status */}
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-3">
+          {/* Mobile Hamburger Menu Drawer Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playTap();
+              setMobileMenuOpen(true);
+            }}
+            className="lg:hidden p-2.5 rounded-xl bg-zinc-900 border border-white/[0.1] text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors shrink-0"
+            title="Open 100-Day Menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
           <div
             onClick={() => {
               sounds.playTap();

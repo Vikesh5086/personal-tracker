@@ -49,8 +49,17 @@ export const HeatmapGrid: React.FC = () => {
     if (log.sleep?.completed) {
       list.push(`Sleep (${log.sleep.durationHours || 8}h)`);
     }
-    if (log.eating?.type && log.eating.type !== 'None') {
-      list.push(`Nutrition (${log.eating.type})`);
+    const totalCal = log.eating?.totalCalories || 
+      ((log.eating?.breakfastCalories || 0) +
+       (log.eating?.lunchCalories || 0) +
+       (log.eating?.dinnerCalories || 0) +
+       (log.eating?.snacksCalories || 0));
+    const hasJunk = typeof log.eating?.ateJunkFood === 'boolean';
+    if (totalCal > 0 || hasJunk || (log.eating?.type && log.eating.type !== 'None')) {
+      const parts: string[] = [];
+      if (totalCal > 0) parts.push(`${totalCal} kcal`);
+      if (hasJunk) parts.push(log.eating?.ateJunkFood ? 'Junk' : 'Clean');
+      list.push(`Food (${parts.length > 0 ? parts.join(', ') : log.eating?.type})`);
     }
     if (log.aiMl?.topic && log.aiMl.topic.trim().length > 0) {
       list.push(`AI/ML (${log.aiMl.topic.slice(0, 18)}...)`);

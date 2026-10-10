@@ -44,6 +44,13 @@ export function createEmptyDailyLog(date: string, dayNumber: number): DailyLog {
       completed: false,
       type: 'None',
       notes: '',
+      breakfastCalories: 0,
+      lunchCalories: 0,
+      dinnerCalories: 0,
+      snacksCalories: 0,
+      totalCalories: 0,
+      ateJunkFood: null,
+      junkFoodLogged: false,
     },
     aiMl: {
       completed: false,
@@ -121,8 +128,18 @@ export function evaluateLogCompletion(log: DailyLog): {
   // 2. Workout (Valid workout type selected and not marked incomplete)
   if (log.workout.type && log.workout.type !== 'None' && log.workout.completed !== false) count++;
 
-  // 3. Eating (Valid meal type selected and not marked incomplete)
-  if (log.eating.type && log.eating.type !== 'None' && log.eating.completed !== false) count++;
+  // 3. Food / Nutrition: complete if at least one meal calorie value > 0 entered OR junk food toggle set (or legacy meal type selected)
+  const hasMealCalories = Boolean(
+    (log.eating?.breakfastCalories != null && log.eating.breakfastCalories > 0) ||
+    (log.eating?.lunchCalories != null && log.eating.lunchCalories > 0) ||
+    (log.eating?.dinnerCalories != null && log.eating.dinnerCalories > 0) ||
+    (log.eating?.snacksCalories != null && log.eating.snacksCalories > 0) ||
+    (log.eating?.totalCalories != null && log.eating.totalCalories > 0)
+  );
+  const hasJunkFoodSet = typeof log.eating?.ateJunkFood === 'boolean' || Boolean(log.eating?.junkFoodLogged);
+  const legacyEatingDone = Boolean(log.eating?.type && log.eating.type !== 'None' && log.eating.completed !== false);
+
+  if (hasMealCalories || hasJunkFoodSet || legacyEatingDone || log.eating?.completed) count++;
 
   // 4. AI/ML (Topic entered or explicitly completed)
   if ((log.aiMl.topic && log.aiMl.topic.trim().length > 0) || log.aiMl.completed) count++;

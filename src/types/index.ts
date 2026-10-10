@@ -15,6 +15,7 @@ export interface UserProfile {
   profilePhoto?: string; // base64
   startDate: string; // YYYY-MM-DD
   endDate: string; // YYYY-MM-DD
+  dailyCalorieTarget?: number; // e.g. 2200 kcal
   themeMode: 'light' | 'dark';
   accentColor: AccentColor;
   onboardingCompleted: boolean;
@@ -45,8 +46,15 @@ export type EatingType = 'Healthy' | 'Cheat meal' | 'Mixed' | 'None';
 
 export interface EatingHabit {
   completed: boolean;
-  type: EatingType;
+  type?: EatingType;
   notes?: string;
+  breakfastCalories?: number;
+  lunchCalories?: number;
+  dinnerCalories?: number;
+  snacksCalories?: number;
+  totalCalories?: number;
+  ateJunkFood?: boolean | null; // true = Yes, false = No, null/undefined = not logged
+  junkFoodLogged?: boolean;
 }
 
 export interface AiMlHabit {

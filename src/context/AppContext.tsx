@@ -29,13 +29,15 @@ import {
 } from '../services/firebase';
 import type { User as FirebaseUser } from 'firebase/auth';
 
-export type NavTab = 'dashboard' | 'overview' | 'calendar' | 'productivity' | 'extras' | 'gamification' | 'settings';
+export type NavTab = 'dashboard' | 'food' | 'overview' | 'calendar' | 'productivity' | 'extras' | 'gamification' | 'settings';
 
 interface AppContextType {
   profile: UserProfile | null;
   isLoading: boolean;
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
+  mobileMenuOpen: boolean;
+  setMobileMenuOpen: (val: boolean) => void;
   currentDate: string;
   setCurrentDate: (date: string) => void;
   todayDate: string;
@@ -102,6 +104,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState<string>(todayDate);
   const [currentLog, setCurrentLog] = useState<DailyLog | null>(null);
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
@@ -472,6 +475,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isLoading,
         activeTab,
         setActiveTab,
+        mobileMenuOpen,
+        setMobileMenuOpen,
         currentDate,
         setCurrentDate,
         todayDate,

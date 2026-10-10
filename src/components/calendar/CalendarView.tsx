@@ -62,6 +62,12 @@ export const CalendarView: React.FC = () => {
     setActiveTab('dashboard');
   };
 
+  const jumpToFoodEdit = (dateStr: string) => {
+    setCurrentDate(dateStr);
+    setSelectedDayLog(null);
+    setActiveTab('food');
+  };
+
   return (
     <div className="space-y-6 pb-12 text-slate-100">
       {/* Before & After Photo Comparison Slider */}
@@ -222,20 +228,81 @@ export const CalendarView: React.FC = () => {
               </div>
             </div>
 
+            {/* Food Protocol Breakdown */}
+            <div className="p-3 rounded-xl bg-zinc-900 border border-white/[0.08] space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-400 font-bold text-[10px] uppercase flex items-center gap-1.5">
+                  <span>🥗</span>
+                  <span>Food & Nutrition Protocol</span>
+                </span>
+                <span className="text-white font-black">
+                  {((selectedDayLog.eating?.totalCalories) || 
+                    ((selectedDayLog.eating?.breakfastCalories || 0) +
+                     (selectedDayLog.eating?.lunchCalories || 0) +
+                     (selectedDayLog.eating?.dinnerCalories || 0) +
+                     (selectedDayLog.eating?.snacksCalories || 0)))} kcal
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-1.5 text-center text-[10px]">
+                <div className="p-1 rounded bg-zinc-800/60">
+                  <span className="text-zinc-500 block">B'fast</span>
+                  <span className="text-zinc-200 font-bold">{selectedDayLog.eating?.breakfastCalories || 0}</span>
+                </div>
+                <div className="p-1 rounded bg-zinc-800/60">
+                  <span className="text-zinc-500 block">Lunch</span>
+                  <span className="text-zinc-200 font-bold">{selectedDayLog.eating?.lunchCalories || 0}</span>
+                </div>
+                <div className="p-1 rounded bg-zinc-800/60">
+                  <span className="text-zinc-500 block">Dinner</span>
+                  <span className="text-zinc-200 font-bold">{selectedDayLog.eating?.dinnerCalories || 0}</span>
+                </div>
+                <div className="p-1 rounded bg-zinc-800/60">
+                  <span className="text-zinc-500 block">Snacks</span>
+                  <span className="text-zinc-200 font-bold">{selectedDayLog.eating?.snacksCalories || 0}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-white/[0.04] text-[11px]">
+                <span className="text-zinc-400">Junk Food:</span>
+                <span className={`font-bold ${
+                  selectedDayLog.eating?.ateJunkFood === true
+                    ? 'text-rose-400'
+                    : selectedDayLog.eating?.ateJunkFood === false
+                    ? 'text-emerald-400'
+                    : 'text-zinc-500'
+                }`}>
+                  {selectedDayLog.eating?.ateJunkFood === true
+                    ? 'Ate Junk Food 🍔'
+                    : selectedDayLog.eating?.ateJunkFood === false
+                    ? '100% Clean (No Junk) 🥗'
+                    : 'Not logged'}
+                </span>
+              </div>
+            </div>
+
             {selectedDayLog.journal.note && (
               <div className="p-3 rounded-xl bg-zinc-900 border border-white/[0.06] text-xs italic text-zinc-300 font-sans">
                 "{selectedDayLog.journal.note}"
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={() => jumpToDayEdit(selectedDayLog.date)}
-              className="w-full py-3 px-4 rounded-xl font-bold font-mono text-zinc-950 bg-white hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 shadow-lg"
-            >
-              <span>EDIT DAY {selectedDayLog.dayNumber} IN DAILY LOG</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => jumpToFoodEdit(selectedDayLog.date)}
+                className="py-2.5 px-3 rounded-xl font-bold font-mono text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
+              >
+                <span>FOOD STATION</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => jumpToDayEdit(selectedDayLog.date)}
+                className="py-2.5 px-3 rounded-xl font-bold font-mono text-xs text-zinc-950 bg-white hover:bg-zinc-200 transition-all flex items-center justify-center gap-1.5 shadow-lg"
+              >
+                <span>DAILY LOG</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </Modal>
       )}

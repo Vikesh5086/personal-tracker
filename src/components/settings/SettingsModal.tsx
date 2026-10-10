@@ -64,6 +64,7 @@ export const SettingsModal: React.FC = () => {
   const [startDate, setStartDate] = useState(profile?.startDate || todayDate);
   const [endDate, setEndDate] = useState(profile?.endDate || todayDate);
   const [profilePhoto, setProfilePhoto] = useState(profile?.profilePhoto || '');
+  const [dailyCalorieTarget, setDailyCalorieTarget] = useState(profile?.dailyCalorieTarget || 2200);
 
   // Keep settings fields in sync if profile updates from cloud
   useEffect(() => {
@@ -77,6 +78,7 @@ export const SettingsModal: React.FC = () => {
       setStartDate(profile.startDate || todayDate);
       setEndDate(profile.endDate || todayDate);
       setProfilePhoto(profile.profilePhoto || '');
+      setDailyCalorieTarget(profile.dailyCalorieTarget || 2200);
     }
   }, [profile, todayDate]);
 
@@ -141,6 +143,7 @@ export const SettingsModal: React.FC = () => {
       profilePhoto: profilePhoto || undefined,
       startDate,
       endDate,
+      dailyCalorieTarget: Number(dailyCalorieTarget) || 2200,
       accentColor,
       themeMode,
       updatedAt: new Date().toISOString(),
@@ -329,6 +332,20 @@ export const SettingsModal: React.FC = () => {
                 <option value="Muscle gain">Muscle gain</option>
                 <option value="Custom">Custom</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+                Daily Calorie Target (kcal)
+              </label>
+              <input
+                type="number"
+                min="1000"
+                max="6000"
+                step="50"
+                value={dailyCalorieTarget}
+                onChange={(e) => setDailyCalorieTarget(Number(e.target.value) || 2200)}
+                className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 font-mono font-bold"
+              />
             </div>
           </div>
 
